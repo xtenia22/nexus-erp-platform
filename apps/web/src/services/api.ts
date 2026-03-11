@@ -19,3 +19,17 @@ export async function getProducts(): Promise<Product[]> {
 
   return response.json();
 }
+
+export async function getProductById(id: string): Promise<Product | null> {
+  const response = await fetch(`http://localhost:3001/api/products/${id}`);
+
+  if (response.status === 404) {
+    return null;
+  }
+
+  if (!response.ok) {
+    throw new Error("Product request failed");
+  }
+
+  return response.json();
+}
