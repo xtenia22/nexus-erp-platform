@@ -3,6 +3,8 @@
 import { useMemo, useState } from "react";
 import { ProductCard } from "@/components/catalog/product-card";
 import { Product } from "@/types/product";
+import { useEffect } from "react";
+
 
 type ProductCatalogProps = {
   products: Product[];
@@ -14,6 +16,10 @@ export function ProductCatalog({ products }: ProductCatalogProps) {
   const [maxPrice, setMaxPrice] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [sortBy,setSortBy]   = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  
+  
+  const ITEMS_PER_PAGE = 1;
 
 
   const categories = useMemo(() => {
@@ -70,6 +76,21 @@ export function ProductCatalog({ products }: ProductCatalogProps) {
     }
   });
 }, [products, searchTerm, minPrice, maxPrice, selectedCategory, sortBy]);
+
+
+const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
+
+const paginatedProducts = useMemo(() => {
+  const start = (currentPage - 1) * ITEMS_PER_PAGE;
+  const end = start + ITEMS_PER_PAGE;
+
+  return filteredProducts.slice(start, end);
+}, [filteredProducts, currentPage]);
+
+useEffect(() => {
+  setCurrentPage(1);
+}, [searchTerm, minPrice, maxPrice, selectedCategory, sortBy]);
+
 
   const hasActiveFilters = searchTerm || minPrice || maxPrice || selectedCategory || sortBy;
 
@@ -198,20 +219,48 @@ export function ProductCatalog({ products }: ProductCatalogProps) {
       </div>
 
       <p className="mb-4 text-sm text-slate-400">
-        Mostrando {filteredProducts.length} de {products.length} productos
+       Mostrando {paginatedProducts.length} de {filteredProducts.length} resultados ({products.length} totales)
       </p>
 
-      {filteredProducts.length > 0 ? (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {filteredProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
-      ) : (
-        <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6 text-slate-300">
-          No se encontraron productos para la búsqueda o filtros aplicados.
-        </div>
-      )}
+{filteredProducts.length > 0 ? (
+  <>
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      {paginatedProducts.map((product) => (
+        <ProductCard key={product.id} product={product} />
+      ))}
+    </div>
+
+    {totalPages > 1 && (
+      <div className="mt-8 flex items-center justify-center gap-4">
+        <button
+          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+          disabled={currentPage === 1}
+          className="rounded-xl border border-slate-700 px-4 py-2 text-sm text-slate-200 disabled:opacity-40 hover:bg-slate-800"
+        >
+          Anterior
+        </button>
+
+        <span className="text-sm text-slate-300">
+          Página {currentPage} de {totalPages}
+        </span>
+
+        <button
+          onClick={() =>
+            setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+          }
+          disabled={currentPage === totalPages}
+          className="rounded-xl border border-slate-700 px-4 py-2 text-sm text-slate-200 disabled:opacity-40 hover:bg-slate-800"
+        >
+          Siguiente
+        </button>
+      </div>
+    )}
+  </>
+) : (
+  <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6 text-slate-300">
+    No se encontraron productos para la búsqueda o filtros aplicados.
+  </div>
+)}
     </div>
   );
 }
