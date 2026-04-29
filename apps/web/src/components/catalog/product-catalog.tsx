@@ -13,6 +13,8 @@ export function ProductCatalog({ products }: ProductCatalogProps) {
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [sortBy,setSortBy]   = useState("");
+
 
   const categories = useMemo(() => {
     return Array.from(new Set(products.map((product) => product.category)));
@@ -20,6 +22,7 @@ export function ProductCatalog({ products }: ProductCatalogProps) {
 
   const filteredProducts = useMemo(() => {
   const normalizedSearch = searchTerm.trim().toLowerCase();
+
   const searchWords = normalizedSearch
     .split(" ")
     .filter((word) => word.length > 0);
@@ -27,7 +30,7 @@ export function ProductCatalog({ products }: ProductCatalogProps) {
   const min = minPrice ? Number(minPrice) : null;
   const max = maxPrice ? Number(maxPrice) : null;
 
-  return products.filter((product) => {
+  const result = products.filter((product) => {
     const productName = product.name.toLowerCase();
 
     const matchesSearch =
@@ -47,21 +50,41 @@ export function ProductCatalog({ products }: ProductCatalogProps) {
       matchesCategory
     );
   });
-}, [products, searchTerm, minPrice, maxPrice, selectedCategory]);
 
-  const hasActiveFilters = searchTerm || minPrice || maxPrice || selectedCategory;
+  return result.sort((a, b) => {
+    switch (sortBy) {
+      case "name-asc":
+        return a.name.localeCompare(b.name);
+
+      case "name-desc":
+        return b.name.localeCompare(a.name);
+
+      case "price-asc":
+        return a.price - b.price;
+
+      case "price-desc":
+        return b.price - a.price;
+
+      default:
+        return 0;
+    }
+  });
+}, [products, searchTerm, minPrice, maxPrice, selectedCategory, sortBy]);
+
+  const hasActiveFilters = searchTerm || minPrice || maxPrice || selectedCategory || sortBy;
 
   function clearFilters() {
     setSearchTerm("");
     setMinPrice("");
     setMaxPrice("");
     setSelectedCategory("");
+    setSortBy("");
   }
 
   return (
     <div>
       <div className="mb-8 rounded-2xl border border-slate-800 bg-slate-900 p-5">
-        <div className="grid gap-4 md:grid-cols-4">
+        <div className="grid gap-4 md:grid-cols-5">
           <div>
             <label
               htmlFor="product-search"
@@ -103,6 +126,28 @@ export function ProductCatalog({ products }: ProductCatalogProps) {
               ))}
             </select>
           </div>
+
+          <div>
+            <label
+                htmlFor="sort-by"
+                className="mb-2 block text-sm font-medium text-slate-300"
+            >
+                Ordenar por
+            </label>
+
+            <select
+                id="sort-by"
+                value={sortBy}
+                onChange={(event) => setSortBy(event.target.value)}
+                className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-slate-100 outline-none transition focus:border-slate-500"
+            >
+                <option value="">Sin orden</option>
+                <option value="name-asc">Nombre A-Z</option>
+                <option value="name-desc">Nombre Z-A</option>
+                <option value="price-asc">Precio menor a mayor</option>
+                <option value="price-desc">Precio mayor a menor</option>
+            </select>
+           </div>      
 
           <div>
             <label
