@@ -11,6 +11,11 @@ export function ProductCard({ product }: ProductCardProps) {
       <article className="h-full rounded-2xl border border-slate-800 bg-slate-900 p-5 shadow-sm transition group-hover:-translate-y-1 group-hover:border-slate-600 group-hover:bg-slate-800">
         <p className="mb-2 text-sm text-slate-400">ID: {product.id}</p>
 
+       
+        <p className="mb-3 inline-flex rounded-full border border-slate-700 px-3 py-1 text-xs text-slate-300">
+        {product.category}
+        </p>
+
         <h2 className="mb-3 text-xl font-semibold text-slate-100">
           {product.name}
         </h2>
