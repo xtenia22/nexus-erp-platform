@@ -1,34 +1,30 @@
-import { getProducts } from "@/services/api";  
+
+import { ProductCard } from "@/components/catalog/product-card";
+import { getProducts } from "@/services/api";
 
 export default async function ProductsPage() {
-  const products = await getProducts(); 
- return ( 
- <main className="min-h-screen bg-slate-950 text-slate-100">
-      <section className="mx-auto max-w-5xl px-6 py-16">
-        <h1 className="mb-4 text-4xl font-bold tracking-tight">Productos</h1>
+  const products = await getProducts();
 
-        <p className="mb-10 text-slate-300">
-          Listado de productos obtenido desde la API del backend.
-        </p>
+  return (
+    <main className="min-h-screen bg-slate-950 text-slate-100">
+      <section className="mx-auto max-w-6xl px-6 py-16">
+        <div className="mb-10">
+          <p className="mb-3 text-sm uppercase tracking-[0.2em] text-slate-400">
+            Catálogo
+          </p>
+
+          <h1 className="mb-4 text-4xl font-bold tracking-tight">
+            Productos
+          </h1>
+
+          <p className="max-w-2xl text-slate-300">
+            Listado de productos obtenido desde la API del backend.
+          </p>
+        </div>
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {products.map((product) => (
-            <article
-              key={product.id}
-              className="rounded-2xl border border-slate-800 bg-slate-900 p-5 shadow-sm"
-            >
-              <p className="mb-2 text-sm text-slate-400">
-                ID: {product.id}
-              </p>
-
-              <h2 className="mb-3 text-xl font-semibold">
-                {product.name}
-              </h2>
-
-              <p className="text-lg text-green-400">
-                USD {product.price}
-              </p>
-            </article>
+            <ProductCard key={product.id} product={product} />
           ))}
         </div>
       </section>
