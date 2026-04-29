@@ -1,5 +1,4 @@
-
-import { ProductCard } from "@/components/catalog/product-card";
+import { ProductCatalog } from "@/components/catalog/product-catalog";
 import { getProducts } from "@/services/api";
 
 export default async function ProductsPage() {
@@ -22,11 +21,7 @@ export default async function ProductsPage() {
           </p>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {products.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
+        <ProductCatalog products={products} />
       </section>
     </main>
   );
