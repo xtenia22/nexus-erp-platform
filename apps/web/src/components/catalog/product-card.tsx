@@ -21,6 +21,7 @@ function formatYearRange(product: Product) {
 
 export function ProductCard({ product }: ProductCardProps) {
   const imageUrl = getAssetUrl(product.image1Url);
+
   return (
     <Link href={`/products/${product.id}`} className="group block">
       <article className="h-full overflow-hidden rounded-2xl border border-slate-800 bg-slate-900 shadow-sm transition group-hover:-translate-y-1 group-hover:border-slate-600 group-hover:bg-slate-800">
@@ -37,6 +38,7 @@ export function ProductCard({ product }: ProductCardProps) {
         </div>
 
         <div className="p-5">
+
           <div className="mb-3 flex flex-wrap gap-2">
             <span className="rounded-full border border-slate-700 px-3 py-1 text-xs text-slate-300">
               {product.category}
@@ -66,6 +68,11 @@ export function ProductCard({ product }: ProductCardProps) {
           <p className="text-sm text-slate-400 transition group-hover:text-slate-200">
             Ver detalle →
           </p>
+
+          
+
+
+
         </div>
       </article>
     </Link>

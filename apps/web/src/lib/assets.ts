@@ -11,3 +11,11 @@ export function getAssetUrl(path: string | null) {
 
   return `${ASSETS_BASE_URL}${path}`;
 }
+
+export function isValidExternalUrl(url: string | null) {
+  if (!url) {
+    return false;
+  }
+
+  return url.startsWith("http://") || url.startsWith("https://");
+}
