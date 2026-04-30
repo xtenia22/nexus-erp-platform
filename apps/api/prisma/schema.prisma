@@ -1,0 +1,108 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Product {
+  id              Int      @id @default(autoincrement())
+  erpId           Int      @unique
+  code            String
+  price           Float
+  primaryMaterial Int?
+  image1Url       String?
+  image2Url       String?
+  brochureUrl     String?
+  videoUrl        String?
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  fitments        ProductFitment[]
+
+  @@index([code])
+  @@index([isActive])
+}
+
+model Brand {
+  id        Int      @id @default(autoincrement())
+  erpId     Int      @unique
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  models    VehicleModel[]
+  fitments  ProductFitment[]
+
+  @@index([name])
+}
+
+model VehicleModel {
+  id        Int      @id @default(autoincrement())
+  erpId     Int
+  name      String
+  order     Int?
+  brandId   Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  brand     Brand    @relation(fields: [brandId], references: [id])
+  fitments  ProductFitment[]
+
+  @@unique([brandId, erpId])
+  @@index([name])
+  @@index([brandId])
+}
+
+model ProductLine {
+  id        Int      @id @default(autoincrement())
+  erpId     Int      @unique
+  name      String
+  order     Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  fitments  ProductFitment[]
+
+  @@index([name])
+}
+
+model ProductFitment {
+  id             Int      @id @default(autoincrement())
+
+  productId      Int
+  brandId        Int
+  vehicleModelId Int
+  productLineId  Int
+
+  description    String
+  observation    String?
+
+  groupId        Int?
+  sequence       Int?
+  yearFrom       Int?
+  yearTo         Int?
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  product        Product      @relation(fields: [productId], references: [id])
+  brand          Brand        @relation(fields: [brandId], references: [id])
+  vehicleModel   VehicleModel @relation(fields: [vehicleModelId], references: [id])
+  productLine    ProductLine  @relation(fields: [productLineId], references: [id])
+
+  @@unique([productId, brandId, vehicleModelId, productLineId, yearFrom, yearTo])
+  @@index([description])
+  @@index([brandId])
+  @@index([vehicleModelId])
+  @@index([productLineId])
+  @@index([yearFrom])
+  @@index([yearTo])
+}

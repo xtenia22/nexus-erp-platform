@@ -19,7 +19,7 @@ export function ProductCatalog({ products }: ProductCatalogProps) {
   const [currentPage, setCurrentPage] = useState(1);
   
   
-  const ITEMS_PER_PAGE = 1;
+  const ITEMS_PER_PAGE = 6;
 
 
   const categories = useMemo(() => {
