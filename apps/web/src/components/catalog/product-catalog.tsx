@@ -1,9 +1,10 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { ProductCard } from "@/components/catalog/product-card";
 import { Product } from "@/types/product";
-import { useEffect } from "react";
+
+import { getBrands,getModels } from "@/services/api";
 
 
 type ProductCatalogProps = {
@@ -17,9 +18,34 @@ export function ProductCatalog({ products }: ProductCatalogProps) {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [sortBy,setSortBy]   = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+
+  const [brands, setBrands] = useState<any[]>([]);
+  const [models, setModels] = useState<any[]>([]);
+
+  const [selectedBrand, setSelectedBrand] = useState<number | null>(null); 
+  const [selectedModel, setSelectedModel] = useState<number | null>(null);
+  const [selectedYear, setSelectedYear] = useState<number | null>(null);
+
   
   
-  const ITEMS_PER_PAGE = 6;
+  const ITEMS_PER_PAGE = 12;
+
+
+  useEffect(() => {
+  getBrands().then(setBrands);
+    }, []);
+
+  useEffect(() => {
+  if (!selectedBrand) {
+    setModels([]);
+    setSelectedModel(null);
+    return;
+  }
+
+  getModels(selectedBrand).then(setModels);
+  }, [selectedBrand]);
+
+
 
 
   const categories = useMemo(() => {
@@ -49,11 +75,27 @@ export function ProductCatalog({ products }: ProductCatalogProps) {
     const matchesCategory =
       !selectedCategory || product.category === selectedCategory;
 
+
+    const matchesBrand = !selectedBrand || product.brandId === selectedBrand;
+    const matchesModel = !selectedModel || product.modelId === selectedModel;  
+
+    const matchesYear =
+          !selectedYear ||
+          (
+            (product.yearFrom === null || product.yearFrom <= selectedYear) &&
+            (product.yearTo === null || product.yearTo >= selectedYear)
+          );
+    
+  
     return (
       matchesSearch &&
       matchesMinPrice &&
       matchesMaxPrice &&
-      matchesCategory
+      matchesCategory &&
+      matchesBrand &&
+      matchesModel &&
+      matchesYear
+
     );
   });
 
@@ -75,7 +117,7 @@ export function ProductCatalog({ products }: ProductCatalogProps) {
         return 0;
     }
   });
-}, [products, searchTerm, minPrice, maxPrice, selectedCategory, sortBy]);
+}, [products, searchTerm, minPrice, maxPrice, selectedCategory, sortBy, selectedBrand, selectedModel, selectedYear]);
 
 
 const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
@@ -89,10 +131,10 @@ const paginatedProducts = useMemo(() => {
 
 useEffect(() => {
   setCurrentPage(1);
-}, [searchTerm, minPrice, maxPrice, selectedCategory, sortBy]);
+}, [searchTerm, minPrice, maxPrice, selectedCategory, sortBy, selectedBrand,  selectedModel, selectedYear,]);
 
 
-  const hasActiveFilters = searchTerm || minPrice || maxPrice || selectedCategory || sortBy;
+  const hasActiveFilters = searchTerm || minPrice || maxPrice || selectedCategory || sortBy || selectedBrand ||  selectedModel || selectedYear;
 
   function clearFilters() {
     setSearchTerm("");
@@ -100,12 +142,16 @@ useEffect(() => {
     setMaxPrice("");
     setSelectedCategory("");
     setSortBy("");
+    setSelectedBrand(null);
+    setSelectedModel(null);
+    setModels([]);
+    setSelectedYear(null);
   }
 
   return (
     <div>
       <div className="mb-8 rounded-2xl border border-slate-800 bg-slate-900 p-5">
-        <div className="grid gap-4 md:grid-cols-5">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <div>
             <label
               htmlFor="product-search"
@@ -147,6 +193,71 @@ useEffect(() => {
               ))}
             </select>
           </div>
+
+          <div>
+          <label className="block text-sm text-slate-300 mb-1">Marca</label>
+          <select
+            value={selectedBrand ?? ""}
+            onChange={(e) => {
+              const val = Number(e.target.value);
+              setSelectedBrand(val || null);
+              setSelectedModel(null);
+            }}
+            className="w-full rounded-xl bg-slate-900 border border-slate-700 px-3 py-2 text-slate-200"
+          >
+            <option value="">Todas</option>
+            {brands.map((b) => (
+              <option key={b.id} value={b.id}>
+                {b.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <label className="block text-sm text-slate-300 mb-1">Modelo</label>
+          <select
+            value={selectedModel ?? ""}
+            onChange={(e) => {
+              const val = Number(e.target.value);
+              setSelectedModel(val || null);
+            }}
+            disabled={!selectedBrand}
+            className="w-full rounded-xl bg-slate-900 border border-slate-700 px-3 py-2 text-slate-200"
+          >
+            <option value="">Todos</option>
+            {models.map((m) => (
+              <option key={m.id} value={m.id}>
+                {m.name}
+              </option>
+            ))}
+          </select>
+        </div>    
+
+        <div>
+          <label className="block text-sm text-slate-300 mb-1">Año</label>
+          <select
+            value={selectedYear ?? ""}
+            onChange={(e) => {
+              const val = Number(e.target.value);
+              setSelectedYear(val || null);
+            }}
+            className="w-full rounded-xl bg-slate-900 border border-slate-700 px-3 py-2 text-slate-200"
+          >
+            <option value="">Todos</option>
+            {Array.from({ length: 25 }, (_, i) => {
+              const year = 2025 - i;
+              return (
+                <option key={year} value={year}>
+                  {year}
+                </option>
+              );
+            })}
+          </select>
+        </div>    
+
+
+
 
           <div>
             <label

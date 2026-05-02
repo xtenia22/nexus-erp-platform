@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 
+
 @Injectable()
 export class ProductsService {
   constructor(private readonly prisma: PrismaService) {}
@@ -25,7 +26,9 @@ export class ProductsService {
       category: fitment.productLine.name,
       code: fitment.product.code,
       brand: fitment.brand.name,
-      model: fitment.vehicleModel.name,
+      brandId: fitment.brand.id,
+      model: fitment.vehicleModel.name,      
+      modelId: fitment.vehicleModel.id,
       yearFrom: fitment.yearFrom,
       yearTo: fitment.yearTo,
       image1Url: fitment.product.image1Url,
@@ -57,7 +60,9 @@ export class ProductsService {
       category: fitment.productLine.name,
       code: fitment.product.code,
       brand: fitment.brand.name,
-      model: fitment.vehicleModel.name,
+      brandId: fitment.brand.id,
+      model: fitment.vehicleModel.name,      
+      modelId: fitment.vehicleModel.id,
       yearFrom: fitment.yearFrom,
       yearTo: fitment.yearTo,
       image1Url: fitment.product.image1Url,
@@ -66,4 +71,37 @@ export class ProductsService {
       videoUrl: fitment.product.videoUrl,
     };
   }
+
+async getBrands(){
+  
+  const brands = await this.prisma.brand.findMany({
+    orderBy  :{ name :'asc'},
+  });
+
+   return brands.map((b)=> ({
+      id: b.id,
+      name:b.name  
+   }));
+
+
+};
+
+
+async getModels(brandId: number) {
+  if (!brandId) {
+    return [];
+  }
+
+  const models = await this.prisma.vehicleModel.findMany({
+    where: { brandId },
+    orderBy: { name: 'asc' },
+  });
+
+  return models.map((m) => ({
+    id: m.id,
+    name: m.name,
+  }));
+}
+
+
 }

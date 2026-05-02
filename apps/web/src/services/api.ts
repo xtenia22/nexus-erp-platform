@@ -33,3 +33,17 @@ export async function getProductById(id: string): Promise<Product | null> {
 
   return response.json();
 }
+
+
+export async function getBrands(){
+  const response = await fetch(`http://localhost:3001/api/products/brands`);
+  return response.json();
+  
+}
+
+export async function getModels(brandId:number) {
+  if (!brandId) return [];
+  const response = await fetch(`http://localhost:3001/api/products/models?brandId=${brandId}`);
+
+  return response.json()
+}
