@@ -24,7 +24,7 @@ export function ProductCard({ product }: ProductCardProps) {
 
   return (
     <Link href={`/products/${product.id}`} className="group block">
-      <article className="h-full overflow-hidden rounded-2xl border border-slate-800 bg-slate-900 shadow-sm transition group-hover:-translate-y-1 group-hover:border-slate-600 group-hover:bg-slate-800">
+      <article className="h-full overflow-hidden rounded-2xl border border-slate-800 bg-slate-900 shadow-sm transition group-hover:-translate-y-1 group-hover:border-slate-600 group-hover:bg-slate-800 hover:shadow-xl hover:shadow-black/20 group hover:scale-[1.02] transition-all duration-300 ease-out">
         <div className="flex h-44 items-center justify-center border-b border-slate-800 bg-slate-950">
           {imageUrl ? (
             <img

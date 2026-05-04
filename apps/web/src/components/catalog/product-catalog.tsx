@@ -6,6 +6,7 @@ import { Product } from "@/types/product";
 import { getBrands,getModels } from "@/services/api";
 import { getAssetUrl } from "@/lib/assets";
 import {usePathname,useRouter,useSearchParams} from "next/navigation";
+import { ProductCardSkeleton } from "@/components/catalog/product-card-skeleton";
 
 
 type ProductCatalogProps = {
@@ -19,8 +20,15 @@ export function ProductCatalog({ products }: ProductCatalogProps) {
   
   const ITEMS_PER_PAGE = 12;
  
+
+
+
+
+  const [isFiltering, setIsFiltering] = useState(false);
  
   // const [searchTerm, setSearchTerm] = useState("");
+
+
 
   const [searchTerm, setSearchTerm] = useState(
   () => searchParams.get("search") ?? ""
@@ -130,6 +138,26 @@ useEffect(() => {
   selectedYear,
   pathname,
   router,
+]);
+
+
+useEffect(() => {
+  setIsFiltering(true);
+
+  const timeout = setTimeout(() => {
+    setIsFiltering(false);
+  }, 180);
+
+  return () => clearTimeout(timeout);
+}, [
+  searchTerm,
+  minPrice,
+  maxPrice,
+  selectedCategory,
+  sortBy,
+  selectedBrand,
+  selectedModel,
+  selectedYear,
 ]);
 
 
@@ -415,7 +443,11 @@ useEffect(() => {
       </aside>  
       <section>
       <div className="mb-8 rounded-2xl border border-slate-800 bg-slate-900 p-5">
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div
+          className={`grid gap-4 md:grid-cols-2 lg:grid-cols-3 transition-all duration-200 ${
+            isFiltering ? "opacity-50 blur-[1px]" : "opacity-100 blur-0"
+          }`}
+          >
           <div>
             <label
               htmlFor="product-search"
@@ -670,8 +702,14 @@ useEffect(() => {
         </div>
       )}
 
+{isFiltering ? (
+  <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+    {Array.from({ length: 6 }).map((_, index) => (
+      <ProductCardSkeleton key={index} />
+    ))}
+  </div>
+) : filteredProducts.length > 0 ? (
 
-{filteredProducts.length > 0 ? (
   <>
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       {paginatedProducts.map((product) => (
