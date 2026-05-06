@@ -5,10 +5,12 @@ import { ProductsService } from './products.service';
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
+
+
   @Get()
-  findAll() {
-    return this.productsService.findAll();
-  }
+  findAll(@Query() query: Record<string, string>) {
+    return this.productsService.findAll(query);
+  } 
 
   @Get('brands')
   getBrands() {

@@ -62,7 +62,7 @@ export function ProductCard({ product }: ProductCardProps) {
           </p>
 
           <p className="mb-4 text-lg font-medium text-green-400">
-            USD {product.price}
+            $ {product.price}
           </p>
 
           <p className="text-sm text-slate-400 transition group-hover:text-slate-200">

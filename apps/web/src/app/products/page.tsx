@@ -2,7 +2,8 @@ import { ProductCatalog } from "@/components/catalog/product-catalog";
 import { getProducts } from "@/services/api";
 
 export default async function ProductsPage() {
-  const products = await getProducts();
+  const productsResponse = await getProducts();
+  const products = productsResponse.items;
 
   return (
     <main className="min-h-screen bg-slate-950 text-slate-100">

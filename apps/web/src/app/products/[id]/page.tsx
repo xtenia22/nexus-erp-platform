@@ -72,7 +72,7 @@ export default async function ProductDetailPage({
             </p>
 
             <p className="text-xl font-medium text-green-400">
-              USD {product.price}
+              $ {product.price} (Precio online con IVA incluído, Sin instalación, Sin flete)
             </p>
 
             {/* ACCIONES */}

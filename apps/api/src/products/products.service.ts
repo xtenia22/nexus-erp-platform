@@ -6,37 +6,134 @@ import { PrismaService } from '../prisma/prisma.service';
 export class ProductsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findAll() {
-    const fitments = await this.prisma.productFitment.findMany({
-      include: {
-        product: true,
-        brand: true,
-        vehicleModel: true,
-        productLine: true,
-      },
-      orderBy: {
-        id: 'asc',
-      },
-    });
+  async findAll(query: Record<string, string> = {}) {
+  //const { search, brand, model, year, category, min, max, sort } = query;
 
-    return fitments.map((fitment) => ({
-      id: fitment.id,
-      name: fitment.description,
-      price: fitment.product.price,
-      category: fitment.productLine.name,
-      code: fitment.product.code,
-      brand: fitment.brand.name,
-      brandId: fitment.brand.id,
-      model: fitment.vehicleModel.name,      
-      modelId: fitment.vehicleModel.id,
-      yearFrom: fitment.yearFrom,
-      yearTo: fitment.yearTo,
-      image1Url: fitment.product.image1Url,
-      image2Url: fitment.product.image2Url,
-      brochureUrl: fitment.product.brochureUrl,
-      videoUrl: fitment.product.videoUrl,
-    }));
+   const { search, brand, model, year, category, min, max, sort, page, limit } =  query;
+
+   const currentPage = page ? Number(page) : 1;
+   const itemsPerPage = limit ? Number(limit) : 12;
+   const skip = (currentPage - 1) * itemsPerPage; 
+
+  const where: any = {
+    product: {
+      isActive: true,
+    },
+  };
+
+  if (brand) {
+    where.brandId = Number(brand);
   }
+
+  if (model) {
+    where.vehicleModelId = Number(model);
+  }
+
+  if (category) {
+    where.productLine = {
+      name: {
+        startsWith: category,
+      },
+    };
+  }
+
+  if (year) {
+    const selectedYear = Number(year);
+
+    where.AND = [
+      ...(where.AND ?? []),
+      {
+        OR: [{ yearFrom: null }, { yearFrom: { lte: selectedYear } }],
+      },
+      {
+        OR: [{ yearTo: null }, { yearTo: { gte: selectedYear } }],
+      },
+    ];
+  }
+
+  if (min || max) {
+    where.product = {
+      ...where.product,
+      price: {
+        ...(min ? { gte: Number(min) } : {}),
+        ...(max ? { lte: Number(max) } : {}),
+      },
+    };
+  }
+
+  if (search) {
+    const words = search
+      .trim()
+      .toLowerCase()
+      .split(' ')
+      .filter(Boolean);
+
+    where.AND = [
+      ...(where.AND ?? []),
+      ...words.map((word) => ({
+        description: {
+          contains: word,
+        },
+      })),
+    ];
+  }
+
+  const orderBy =
+    sort === 'name-asc'
+      ? { description: 'asc' as const }
+      : sort === 'name-desc'
+        ? { description: 'desc' as const }
+        : sort === 'price-asc'
+          ? { product: { price: 'asc' as const } }
+          : sort === 'price-desc'
+            ? { product: { price: 'desc' as const } }
+            : { id: 'asc' as const };
+
+  const [total, fitments] = await Promise.all([
+  this.prisma.productFitment.count({
+    where,
+  }),
+
+  this.prisma.productFitment.findMany({
+    where,
+    include: {
+      product: true,
+      brand: true,
+      vehicleModel: true,
+      productLine: true,
+    },
+    orderBy,
+    skip,
+    take: itemsPerPage,
+  }),
+]);
+
+  const items = fitments.map((fitment) => ({
+  id: fitment.id,
+  name: fitment.description,
+  price: fitment.product.price,
+  category: fitment.productLine.name,
+  code: fitment.product.code,
+  brandId: fitment.brand.id,
+  brand: fitment.brand.name,
+  modelId: fitment.vehicleModel.id,
+  model: fitment.vehicleModel.name,
+  yearFrom: fitment.yearFrom,
+  yearTo: fitment.yearTo,
+  image1Url: fitment.product.image1Url,
+  image2Url: fitment.product.image2Url,
+  brochureUrl: fitment.product.brochureUrl,
+  videoUrl: fitment.product.videoUrl,
+}));
+
+return {
+  items,
+  total,
+  page: currentPage,
+  limit: itemsPerPage,
+  totalPages: Math.ceil(total / itemsPerPage),
+};
+}
 
   async findOne(id: number) {
     const fitment = await this.prisma.productFitment.findUnique({

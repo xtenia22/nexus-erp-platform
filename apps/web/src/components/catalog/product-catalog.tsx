@@ -7,7 +7,7 @@ import { getBrands,getModels } from "@/services/api";
 import { getAssetUrl } from "@/lib/assets";
 import {usePathname,useRouter,useSearchParams} from "next/navigation";
 import { ProductCardSkeleton } from "@/components/catalog/product-card-skeleton";
-
+import { getProducts } from "@/services/api";
 
 type ProductCatalogProps = {
   products: Product[];
@@ -33,6 +33,8 @@ export function ProductCatalog({ products }: ProductCatalogProps) {
   const [searchTerm, setSearchTerm] = useState(
   () => searchParams.get("search") ?? ""
   );
+
+ const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm);
 
 //  const [minPrice, setMinPrice] = useState("");
 
@@ -86,8 +88,62 @@ export function ProductCatalog({ products }: ProductCatalogProps) {
     });
 
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
-   
+  const [catalogProducts, setCatalogProducts] = useState(products);  
+  const [totalProducts, setTotalProducts] = useState(products.length);
+  const [backendTotalPages, setBackendTotalPages] = useState(1);
   
+
+useEffect(() => {
+  const timeout = setTimeout(() => {
+    setDebouncedSearchTerm(searchTerm);
+  }, 300);
+
+  return () => clearTimeout(timeout);
+}, [searchTerm]);
+
+
+  useEffect(() => {
+  async function loadProducts() {
+    try {
+      setIsFiltering(true);
+
+      const data = await getProducts({
+        search: debouncedSearchTerm,
+        category: selectedCategory,
+        brand: selectedBrand,
+        model: selectedModel,
+        year: selectedYear,
+        min: minPrice,
+        max: maxPrice,
+        sort: sortBy,
+        page: currentPage,
+        limit: ITEMS_PER_PAGE,
+      });
+
+      setCatalogProducts(data.items);
+      setTotalProducts(data.total);
+      setBackendTotalPages(data.totalPages);  
+
+    } finally {
+      setTimeout(() => {
+        setIsFiltering(false);
+
+      }, 150);
+    }
+  }
+
+  loadProducts();
+}, [
+  debouncedSearchTerm,
+  selectedCategory,
+  selectedBrand,
+  selectedModel,
+  selectedYear,
+  minPrice,
+  maxPrice,
+  sortBy,
+  currentPage,
+]);
 
 
   useEffect(() => {
@@ -191,20 +247,6 @@ function splitCategoryName(category: string) {
   };
 }
 
-// const categoryOptions = useMemo(() => {
-//   const map = new Map<string, Product>();
-
-//   products.forEach((product) => {
-//     if (!map.has(product.category)) {
-//       map.set(product.category, product);
-//     }
-//   });
-
-//   return Array.from(map.entries()).map(([name, product]) => ({
-//     name,
-//     imageUrl: getAssetUrl(product.image1Url),
-//   }));
-// }, [products]);
 
 const categoryGroups = useMemo(() => {
   const groups = new Map<
@@ -255,84 +297,13 @@ const categoryGroups = useMemo(() => {
 
 
 
-  const filteredProducts = useMemo(() => {
-  const normalizedSearch = searchTerm.trim().toLowerCase();
-
-  const searchWords = normalizedSearch
-    .split(" ")
-    .filter((word) => word.length > 0);
-
-  const min = minPrice ? Number(minPrice) : null;
-  const max = maxPrice ? Number(maxPrice) : null;
-
-  const result = products.filter((product) => {
-    const productName = product.name.toLowerCase();
-
-    const matchesSearch =
-      searchWords.length === 0 ||
-      searchWords.every((word) => productName.includes(word));
-
-    const matchesMinPrice = min === null || product.price >= min;
-    const matchesMaxPrice = max === null || product.price <= max;
-
-    const matchesCategory =
-      !selectedCategory ||
-      product.category === selectedCategory ||
-      splitCategoryName(product.category).parent === selectedCategory;
+const filteredProducts = useMemo(() => {
+  return catalogProducts;
+}, [catalogProducts]);
 
 
-    const matchesBrand = !selectedBrand || product.brandId === selectedBrand;
-    const matchesModel = !selectedModel || product.modelId === selectedModel;  
-
-    const matchesYear =
-          !selectedYear ||
-          (
-            (product.yearFrom === null || product.yearFrom <= selectedYear) &&
-            (product.yearTo === null || product.yearTo >= selectedYear)
-          );
-    
-  
-    return (
-      matchesSearch &&
-      matchesMinPrice &&
-      matchesMaxPrice &&
-      matchesCategory &&
-      matchesBrand &&
-      matchesModel &&
-      matchesYear
-
-    );
-  });
-
-  return result.sort((a, b) => {
-    switch (sortBy) {
-      case "name-asc":
-        return a.name.localeCompare(b.name);
-
-      case "name-desc":
-        return b.name.localeCompare(a.name);
-
-      case "price-asc":
-        return a.price - b.price;
-
-      case "price-desc":
-        return b.price - a.price;
-
-      default:
-        return 0;
-    }
-  });
-}, [products, searchTerm, minPrice, maxPrice, selectedCategory, sortBy, selectedBrand, selectedModel, selectedYear]);
-
-
-const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
-
-const paginatedProducts = useMemo(() => {
-  const start = (currentPage - 1) * ITEMS_PER_PAGE;
-  const end = start + ITEMS_PER_PAGE;
-
-  return filteredProducts.slice(start, end);
-}, [filteredProducts, currentPage]);
+const totalPages = backendTotalPages;
+const paginatedProducts = catalogProducts;
 
 useEffect(() => {
   setCurrentPage(1);
@@ -604,7 +575,7 @@ useEffect(() => {
       </div>
 
       <p className="mb-4 text-sm text-slate-400">
-       Mostrando {paginatedProducts.length} de {filteredProducts.length} resultados ({products.length} totales)
+       Mostrando {catalogProducts.length} de {totalProducts} resultados
       </p>
 
       {hasActiveFilters && (
