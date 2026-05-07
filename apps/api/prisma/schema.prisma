@@ -61,17 +61,36 @@ model VehicleModel {
   @@index([brandId])
 }
 
+model Category {
+  id        Int      @id @default(autoincrement())
+  erpId     Int      @unique
+  name      String
+  imageUrl  String?
+  order     Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  lines     ProductLine[]
+
+  @@index([name])
+}
+
 model ProductLine {
   id        Int      @id @default(autoincrement())
   erpId     Int      @unique
   name      String
   order     Int?
+
+  categoryId Int?
+  category   Category? @relation(fields: [categoryId], references: [id])
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   fitments  ProductFitment[]
 
   @@index([name])
+  @@index([categoryId])
 }
 
 model ProductFitment {

@@ -20,10 +20,17 @@ type ErpModel = {
   ORDEN?: number;
 };
 
+type CategoriaERP = {
+  IDCAT: number;
+  NOMBRE: string;
+  URLIMG?: string;
+};
+
 type ErpLine = {
   IDLINEAPROD: number;
   LINEAPRODUCTO: string;
   ORDEN?: number;
+  IDCAT?: number;
 };
 
 type ErpArticle = {
@@ -51,6 +58,7 @@ type CatalogExport = {
   MARCAS: ErpBrand[];
   MODELOS: ErpModel[];
   LINEAS: ErpLine[];
+  CATEGORIAS: CategoriaERP[];
 };
 
 const data = catalog as CatalogExport;
@@ -64,7 +72,8 @@ function normalizeYearTo(value?: number) {
 }
 
 async function main() {
-  console.log("Importando catálogo...");
+  console.log("Comienza Importacion...");
+  console.log("----> Comienza Importacion de MARCAS...");
 
   for (const brand of data.MARCAS) {
     await prisma.brand.upsert({
@@ -78,22 +87,57 @@ async function main() {
       },
     });
   }
+console.log("<---- Finalizó Importacion de MARCAS...");
 
-  for (const line of data.LINEAS) {
-    await prisma.productLine.upsert({
-      where: { erpId: line.IDLINEAPROD },
-      update: {
-        name: line.LINEAPRODUCTO,
-        order: line.ORDEN ?? null,
-      },
-      create: {
-        erpId: line.IDLINEAPROD,
-        name: line.LINEAPRODUCTO,
-        order: line.ORDEN ?? null,
-      },
-    });
-  }
 
+console.log("----> Comienza Importacion de CATEGORIAS...");
+
+  for (const categoria of data.CATEGORIAS ?? []) {
+  await prisma.category.upsert({
+    where: {
+      erpId: categoria.IDCAT,
+    },
+    update: {
+      name: categoria.NOMBRE,
+      imageUrl: categoria.URLIMG || null,
+    },
+    create: {
+      erpId: categoria.IDCAT,
+      name: categoria.NOMBRE,
+      imageUrl: categoria.URLIMG || null,
+    },
+  });
+}
+console.log("<---- Finalizo Importacion de CATEGORIAS...");
+console.log("----> Comienza Importacion de LÍNEAS...");
+  for (const linea of data.LINEAS ?? []) {
+  const category = linea.IDCAT
+    ? await prisma.category.findUnique({
+        where: {
+          erpId: linea.IDCAT,
+        },
+      })
+    : null;
+
+  await prisma.productLine.upsert({
+    where: {
+      erpId: linea.IDLINEAPROD,
+    },
+    update: {
+      name: linea.LINEAPRODUCTO,
+      order: linea.ORDEN ?? null,
+      categoryId: category?.id ?? null,
+    },
+    create: {
+      erpId: linea.IDLINEAPROD,
+      name: linea.LINEAPRODUCTO,
+      order: linea.ORDEN ?? null,
+      categoryId: category?.id ?? null,
+    },
+  });
+}
+console.log("<---- Finalizó Importacion de LÍNEAS...");
+console.log("----> Comienza Importacion de MODELOS...");      
   for (const model of data.MODELOS) {
     const brand = await prisma.brand.findUnique({
       where: { erpId: model.IDMARCA },
@@ -123,6 +167,9 @@ async function main() {
       },
     });
   }
+  
+  console.log("<---- Finalizó Importacion de MODELOS...");
+  console.log("----> Comienza Importacion de ARTICULOS...");
 
   for (const article of data.ARTICULOS_ASOC) {
     const product = await prisma.product.upsert({
@@ -148,7 +195,8 @@ async function main() {
         videoUrl: article.URLVIDEO ?? null,
         isActive: true,
       },
-    });
+    });   
+
 
     const brand = await prisma.brand.findUnique({
       where: { erpId: article.MARCA },
@@ -225,7 +273,7 @@ if (existingFitment) {
   });
 }
   }
-
+  console.log("<---- Finalizó Importacion de ARTICULOS...");
   console.log("Importación finalizada.");
 }
 

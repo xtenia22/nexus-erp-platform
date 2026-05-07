@@ -22,9 +22,17 @@ export class ProductsController {
     return this.productsService.getModels(Number(brandId));
   }
 
+  @Get('categories')
+  getCategories() {
+    return this.productsService.getCategories();
+  }
+
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.productsService.findOne(id);
   }
+
+
+
 }
 

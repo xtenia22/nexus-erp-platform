@@ -9,7 +9,19 @@ export class ProductsService {
   async findAll(query: Record<string, string> = {}) {
   //const { search, brand, model, year, category, min, max, sort } = query;
 
-   const { search, brand, model, year, category, min, max, sort, page, limit } =  query;
+  const {
+  search,
+  brand,
+  model,
+  year,
+  categoryId,
+  productLineId,
+  min,
+  max,
+  sort,
+  page,
+  limit,
+} = query;
 
    const currentPage = page ? Number(page) : 1;
    const itemsPerPage = limit ? Number(limit) : 12;
@@ -29,12 +41,14 @@ export class ProductsService {
     where.vehicleModelId = Number(model);
   }
 
-  if (category) {
-    where.productLine = {
-      name: {
-        startsWith: category,
-      },
-    };
+  if (categoryId) {
+  where.productLine = {
+    categoryId: Number(categoryId),
+  };
+}
+
+  if (productLineId) {
+    where.productLineId = Number(productLineId);
   }
 
   if (year) {
@@ -197,6 +211,35 @@ async getModels(brandId: number) {
   return models.map((m) => ({
     id: m.id,
     name: m.name,
+  }));
+}
+
+async getCategories() {
+  const categories = await this.prisma.category.findMany({
+    orderBy: [
+      { order: 'asc' },
+      { name: 'asc' },
+    ],
+    include: {
+      lines: {
+        orderBy: [
+          { order: 'asc' },
+          { name: 'asc' },
+        ],
+      },
+    },
+  });
+
+  return categories.map((category) => ({
+    id: category.id,
+    erpId: category.erpId,
+    name: category.name,
+    imageUrl: category.imageUrl,
+    children: category.lines.map((line) => ({
+      id: line.id,
+      erpId: line.erpId,
+      name: line.name,
+    })),
   }));
 }
 
