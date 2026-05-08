@@ -4,7 +4,8 @@ const API_URL = "http://localhost:3001/api";
 
 type ProductFilters = {
   search?: string;
-  category?: string;
+  categoryId?: number | null;
+  productLineId?: number | null;
   brand?: number | null;
   model?: number | null;
   year?: number | null;
@@ -29,10 +30,11 @@ export async function getProducts(filters: ProductFilters = {}) {
   const params = new URLSearchParams();
 
   if (filters.search) params.set("search", filters.search);
-  if (filters.category) params.set("category", filters.category);
   if (filters.brand) params.set("brand", String(filters.brand));
   if (filters.model) params.set("model", String(filters.model));
   if (filters.year) params.set("year", String(filters.year));
+  if (filters.categoryId) params.set("categoryId", String(filters.categoryId));
+  if (filters.productLineId) params.set("productLineId", String(filters.productLineId));
   if (filters.min) params.set("min", filters.min);
   if (filters.max) params.set("max", filters.max);
   if (filters.sort) params.set("sort", filters.sort);
@@ -87,6 +89,28 @@ export async function getModels(brandId: number) {
 
   if (!response.ok) {
     throw new Error("Models request failed");
+  }
+
+  return response.json();
+}
+
+export type CategoryTreeItem = {
+  id : number;
+  erpId: number;
+  name: string;
+  imageUrl: string | null;
+  children: {
+    id: number;
+    erpId: number;
+    name: string;
+  }[];
+};
+
+export async function getCategories(): Promise<CategoryTreeItem[]> {
+  const response = await fetch(`${API_URL}/products/categories`);
+
+  if (!response.ok) {
+    throw new Error("Categories request failed");
   }
 
   return response.json();

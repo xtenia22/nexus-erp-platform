@@ -3,11 +3,16 @@
 import { useMemo, useState, useEffect } from "react";
 import { ProductCard } from "@/components/catalog/product-card";
 import { Product } from "@/types/product";
-import { getBrands,getModels } from "@/services/api";
 import { getAssetUrl } from "@/lib/assets";
 import {usePathname,useRouter,useSearchParams} from "next/navigation";
 import { ProductCardSkeleton } from "@/components/catalog/product-card-skeleton";
-import { getProducts } from "@/services/api";
+import {
+  getBrands,
+  getModels,
+  getProducts,
+  getCategories,
+  type CategoryTreeItem,
+} from "@/services/api";
 
 type ProductCatalogProps = {
   products: Product[];
@@ -54,6 +59,19 @@ export function ProductCatalog({ products }: ProductCatalogProps) {
   () => searchParams.get("category") ?? ""
   );
 
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(() => {
+    const categoryId = searchParams.get("categoryId");
+    return categoryId ? Number(categoryId) : null;
+  });
+
+  const [selectedProductLineId, setSelectedProductLineId] = useState<number | null>(() => {
+    const productLineId = searchParams.get("productLineId");
+    return productLineId ? Number(productLineId) : null;
+  });
+
+
+
+
  // const [sortBy,setSortBy]   = useState("");
 
   const [sortBy, setSortBy] = useState(
@@ -91,7 +109,13 @@ export function ProductCatalog({ products }: ProductCatalogProps) {
   const [catalogProducts, setCatalogProducts] = useState(products);  
   const [totalProducts, setTotalProducts] = useState(products.length);
   const [backendTotalPages, setBackendTotalPages] = useState(1);
-  
+  const [categoryTree, setCategoryTree] = useState<CategoryTreeItem[]>([]);
+
+
+useEffect(() => {
+  getCategories().then(setCategoryTree);
+}, []);
+
 
 useEffect(() => {
   const timeout = setTimeout(() => {
@@ -109,7 +133,8 @@ useEffect(() => {
 
       const data = await getProducts({
         search: debouncedSearchTerm,
-        category: selectedCategory,
+        categoryId: selectedCategoryId,
+        productLineId: selectedProductLineId,
         brand: selectedBrand,
         model: selectedModel,
         year: selectedYear,
@@ -135,7 +160,8 @@ useEffect(() => {
   loadProducts();
 }, [
   debouncedSearchTerm,
-  selectedCategory,
+  selectedCategoryId   ,
+  selectedProductLineId,
   selectedBrand,
   selectedModel,
   selectedYear,
@@ -171,7 +197,13 @@ useEffect(() => {
   const params = new URLSearchParams();
 
   if (searchTerm) params.set("search", searchTerm);
-  if (selectedCategory) params.set("category", selectedCategory);
+  if (selectedCategoryId) {
+  params.set("categoryId", String(selectedCategoryId));
+}
+
+if (selectedProductLineId) {
+  params.set("productLineId", String(selectedProductLineId));
+}
   if (minPrice) params.set("min", minPrice);
   if (maxPrice) params.set("max", maxPrice);
   if (sortBy) params.set("sort", sortBy);
@@ -185,7 +217,8 @@ useEffect(() => {
   router.replace(nextUrl, { scroll: false });
 }, [
   searchTerm,
-  selectedCategory,
+  selectedCategoryId,
+  selectedProductLineId,
   minPrice,
   maxPrice,
   sortBy,
@@ -209,7 +242,8 @@ useEffect(() => {
   searchTerm,
   minPrice,
   maxPrice,
-  selectedCategory,
+  selectedCategoryId,
+  selectedProductLineId,
   sortBy,
   selectedBrand,
   selectedModel,
@@ -248,52 +282,29 @@ function splitCategoryName(category: string) {
 }
 
 
-const categoryGroups = useMemo(() => {
-  const groups = new Map<
-    string,
-    {
-      name: string;
-      imageUrl: string | null;
-      children: {
-        name: string;
-        label: string;
-        imageUrl: string | null;
-      }[];
+const activeCategory = useMemo(() => {
+  if (!selectedCategoryId) return null;
+
+  return categoryTree.find(
+    (category) => category.id === selectedCategoryId
+  );
+}, [categoryTree, selectedCategoryId]);
+
+const activeProductLine = useMemo(() => {
+  if (!selectedProductLineId) return null;
+
+  for (const category of categoryTree) {
+    const child = category.children.find(
+      (line) => line.id === selectedProductLineId
+    );
+
+    if (child) {
+      return child;
     }
-  >();
+  }
 
-  products.forEach((product) => {
-    const { parent, child } = splitCategoryName(product.category);
-    const imageUrl = getAssetUrl(product.image1Url);
-
-    if (!groups.has(parent)) {
-      groups.set(parent, {
-        name: parent,
-        imageUrl,
-        children: [],
-      });
-    }
-
-    const group = groups.get(parent)!;
-
-    if (!group.children.some((item) => item.name === product.category)) {
-      group.children.push({
-        name: product.category,
-        label: child,
-        imageUrl,
-      });
-    }
-  });
-
-  return Array.from(groups.values())
-    .map((group) => ({
-      ...group,
-      children: group.children.sort((a, b) =>
-        a.label.localeCompare(b.label)
-      ),
-    }))
-    .sort((a, b) => a.name.localeCompare(b.name));
-}, [products]);
+  return null;
+}, [categoryTree, selectedProductLineId]);
 
 
 
@@ -310,19 +321,30 @@ useEffect(() => {
 }, [searchTerm, minPrice, maxPrice, selectedCategory, sortBy, selectedBrand,  selectedModel, selectedYear,]);
 
 
-  const hasActiveFilters = searchTerm || minPrice || maxPrice || selectedCategory || sortBy || selectedBrand ||  selectedModel || selectedYear;
+ const hasActiveFilters =
+  searchTerm ||
+  minPrice ||
+  maxPrice ||
+  selectedCategoryId ||
+  selectedProductLineId ||
+  sortBy ||
+  selectedBrand ||
+  selectedModel ||
+  selectedYear;
 
-  function clearFilters() {
-    setSearchTerm("");
-    setMinPrice("");
-    setMaxPrice("");
-    setSelectedCategory("");
-    setSortBy("");
-    setSelectedBrand(null);
-    setSelectedModel(null);
-    setModels([]);
-    setSelectedYear(null);
-  }
+ function clearFilters() {
+  setSearchTerm("");
+  setMinPrice("");
+  setMaxPrice("");
+  setSelectedCategory("");
+  setSelectedCategoryId(null);
+  setSelectedProductLineId(null);
+  setSortBy("");
+  setSelectedBrand(null);
+  setSelectedModel(null);
+  setModels([]);
+  setSelectedYear(null);
+}
 
   return (
     <div className="grid gap-8 lg:grid-cols-[260px_1fr]">
@@ -332,10 +354,13 @@ useEffect(() => {
             Categorías
           </h2>
 
-          {selectedCategory && (
+         {(selectedCategoryId || selectedProductLineId) && (
             <button
               type="button"
-              onClick={() => setSelectedCategory("")}
+              onClick={() => {
+                  setSelectedCategoryId(null);
+                  setSelectedProductLineId(null);
+                  }}
               className="text-xs text-slate-400 hover:text-slate-200"
             >
               Todas
@@ -344,70 +369,80 @@ useEffect(() => {
         </div>
 
         <div className="space-y-2">
-          {categoryGroups.map((group) => {
-             const isExpanded = expandedGroups[group.name] ?? false;             
-             const groupIsActive =
-                selectedCategory === group.name ||
-                group.children.some((child) => child.name === selectedCategory);
+          {categoryTree.map((category) => {
+            const isExpanded = expandedGroups[category.name] ?? false;
 
-               return (
-                <div key={group.name} className="rounded-xl border border-slate-800 bg-slate-950/60 p-2">
-                 <button
-                      type="button"
-                      onClick={() => toggleGroup(group.name)}
-                      className={`flex w-full items-center justify-between gap-3 rounded-lg px-2 py-2 text-left transition ${
-                        groupIsActive
-                          ? "bg-slate-800 text-white"
-                          : "text-slate-300 hover:bg-slate-800"
-                      }`}
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="h-10 w-10 overflow-hidden rounded-full border border-slate-700 bg-slate-950">
-                          {group.imageUrl ? (
-                            <img
-                              src={group.imageUrl}
-                              alt={group.name}
-                              className="h-full w-full object-cover"
-                            />
-                          ) : (
-                            <div className="h-full w-full bg-slate-800" />
-                          )}
-                        </div>
-
-                        <span className="text-sm font-semibold">{group.name}</span>
-                      </div>
-
-                      <span className="text-xs text-slate-400">
-                        {isExpanded ? "▼" : "▶"}
-                      </span>
-                    </button>
-                    {isExpanded && (
-                    <div className="ml-6 mt-2 space-y-1 border-l border-slate-800 pl-3">
-                      {group.children.map((child) => {
-                        const isSelected = selectedCategory === child.name;
-
-                        return (
-                          <button
-                            key={child.name}
-                            type="button"
-                            onClick={() => setSelectedCategory(child.name)}
-                            className={`flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-sm transition ${
-                              isSelected
-                                ? "bg-slate-700 text-white"
-                                : "text-slate-400 hover:bg-slate-800 hover:text-slate-200"
-                            }`}
-                          >
-                            <span className="text-slate-600">└</span>
-                            <span>{child.label}</span>
-                          </button>
-                        );
-                      })}
+            const groupIsActive =
+              selectedCategoryId === category.id ||
+              category.children.some((child) => child.id === selectedProductLineId);
+            return (
+              <div
+                key={category.id}
+                className="rounded-xl border border-slate-800 bg-slate-950/60 p-2"
+              >
+                <button
+                  type="button"
+                  onClick={() => {
+                    toggleGroup(category.name);
+                    setSelectedCategoryId(category.id);
+                    setSelectedProductLineId(null);
+                  }}
+                  className={`flex w-full items-center justify-between gap-3 rounded-lg px-2 py-2 text-left transition ${
+                    groupIsActive
+                      ? "bg-slate-800 text-white"
+                      : "text-slate-300 hover:bg-slate-800"
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 overflow-hidden rounded-full border border-slate-700 bg-slate-950">
+                      {category.imageUrl ? (
+                        <img
+                          src={getAssetUrl(category.imageUrl)}
+                          alt={category.name}
+                          className="h-full w-full object-cover"
+                        />
+                      ) : (
+                        <div className="h-full w-full bg-slate-800" />
+                      )}
                     </div>
-                  )}
+
+                    <span className="text-sm font-semibold">{category.name}</span>
                   </div>
-                );
-              })}
-                   
+
+                  <span className="text-xs text-slate-400">
+                    {isExpanded ? "▼" : "▶"}
+                  </span>
+                </button>
+
+                {isExpanded && (
+                  <div className="ml-6 mt-2 space-y-1 border-l border-slate-800 pl-3">
+                    {category.children.map((child) => {
+                      const isSelected = selectedProductLineId === child.id;
+
+                      return (
+                        <button
+                          key={child.id}
+                          type="button"
+                          onClick={() => {
+                            setSelectedCategoryId(null);
+                            setSelectedProductLineId(child.id);
+                          }}
+                          className={`flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-sm transition ${
+                            isSelected
+                              ? "bg-slate-700 text-white"
+                              : "text-slate-400 hover:bg-slate-800 hover:text-slate-200"
+                          }`}
+                        >
+                          <span className="text-slate-600">└</span>
+                          <span>{child.name}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            );
+          })}
          
         </div>
 
@@ -591,13 +626,24 @@ useEffect(() => {
             </button>
           )}
 
-          {selectedCategory && (
+          {activeCategory && (
             <button
               type="button"
-              onClick={() => setSelectedCategory("")}
+              onClick={() => setSelectedCategoryId(null)}
               className="flex items-center gap-2 rounded-full bg-slate-800 px-3 py-1 text-sm text-slate-200 hover:bg-slate-700"
             >
-              {selectedCategory}
+              Categoría: {activeCategory.name}
+              <span>✕</span>
+            </button>
+          )}
+
+          {activeProductLine && (
+            <button
+              type="button"
+              onClick={() => setSelectedProductLineId(null)}
+              className="flex items-center gap-2 rounded-full bg-slate-800 px-3 py-1 text-sm text-slate-200 hover:bg-slate-700"
+            >
+              Línea: {activeProductLine.name}
               <span>✕</span>
             </button>
           )}
@@ -606,9 +652,10 @@ useEffect(() => {
             <button
               type="button"
               onClick={() => {
-                setSelectedBrand(null);
-                setSelectedModel(null);
-              }}
+                  setSelectedBrand(null);
+                  setSelectedModel(null);
+                  setModels([]);
+                }}
               className="flex items-center gap-2 rounded-full bg-slate-800 px-3 py-1 text-sm text-slate-200 hover:bg-slate-700"
             >
               {brands.find((b) => b.id === selectedBrand)?.name}
