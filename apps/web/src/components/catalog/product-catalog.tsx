@@ -14,6 +14,10 @@ import {
   type CategoryTreeItem,
 } from "@/services/api";
 
+
+import { CategorySidebar } from "@/components/catalog/category-sidebar";
+import { FilterPanel } from "@/components/catalog/filter-panel";
+
 type ProductCatalogProps = {
   products: Product[];
 };
@@ -311,291 +315,85 @@ export function ProductCatalog({ products }: ProductCatalogProps) {
   }
 
   return (
-    <div className="grid gap-8 lg:grid-cols-[260px_1fr]">
-      <aside className="rounded-2xl border border-slate-800 bg-slate-900 p-5">
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-400">
-            Categorías
-          </h2>
+    <div className="flex flex-col gap-4 lg:grid lg:grid-cols-[260px_1fr] lg:gap-8">
+    <div className="hidden lg:block">
+    <CategorySidebar
+            categoryTree={categoryTree}
+            selectedCategoryId={selectedCategoryId}
+            selectedProductLineId={selectedProductLineId}
+            expandedGroups={expandedGroups}
+            onToggleGroup={toggleGroup}
+            onSelectCategory={(categoryId) => {
+              setSelectedCategoryId(categoryId);
+              setSelectedProductLineId(null);
+            }}
+            onSelectProductLine={(productLineId) => {
+              setSelectedCategoryId(null);
+              setSelectedProductLineId(productLineId);
+            }}
+            onClearCategory={() => {
+              setSelectedCategoryId(null);
+              setSelectedProductLineId(null);
+            }}
+          />
+        </div>
+      <section>
+      <FilterPanel
+          searchTerm={searchTerm}
+          minPrice={minPrice}
+          maxPrice={maxPrice}
+          sortBy={sortBy}
+          brands={brands}
+          models={models}
+          selectedBrand={selectedBrand}
+          selectedModel={selectedModel}
+          selectedYear={selectedYear}
+          isFiltering={isFiltering}
+          isVehicleFiltersOpen={isVehicleFiltersOpen}
+          isMoreFiltersOpen={isMoreFiltersOpen}
+          hasActiveFilters={hasActiveFilters}
+          onSearchChange={setSearchTerm}
+          onMinPriceChange={setMinPrice}
+          onMaxPriceChange={setMaxPrice}
+          onSortChange={setSortBy}
+          onBrandChange={(brandId) => {
+            setSelectedBrand(brandId);
+            setSelectedModel(null);
+          }}
+          onModelChange={setSelectedModel}
+          onYearChange={setSelectedYear}
+          onToggleVehicleFilters={() =>
+            setIsVehicleFiltersOpen((prev) => !prev)
+          }
+          onToggleMoreFilters={() =>
+            setIsMoreFiltersOpen((prev) => !prev)
+          }
+          onClearFilters={clearFilters}
+        />
 
-          {(selectedCategoryId || selectedProductLineId) && (
-            <button
-              type="button"
-              onClick={() => {
+        <div className="mb-4 lg:hidden">
+            <CategorySidebar
+              categoryTree={categoryTree}
+              selectedCategoryId={selectedCategoryId}
+              selectedProductLineId={selectedProductLineId}
+              expandedGroups={expandedGroups}
+              onToggleGroup={toggleGroup}
+              onSelectCategory={(categoryId) => {
+                setSelectedCategoryId(categoryId);
+                setSelectedProductLineId(null);
+              }}
+              onSelectProductLine={(productLineId) => {
+                setSelectedCategoryId(null);
+                setSelectedProductLineId(productLineId);
+              }}
+              onClearCategory={() => {
                 setSelectedCategoryId(null);
                 setSelectedProductLineId(null);
               }}
-              className="text-xs text-slate-400 hover:text-slate-200"
-            >
-              Todas
-            </button>
-          )}
-        </div>
-
-        <div className="space-y-2">
-          {categoryTree.map((category) => {
-            const isExpanded = expandedGroups[category.name] ?? false;
-
-            const groupIsActive =
-              selectedCategoryId === category.id ||
-              category.children.some(
-                (child) => child.id === selectedProductLineId
-              );
-
-            return (
-              <div
-                key={category.id}
-                className="rounded-xl border border-slate-800 bg-slate-950/60 p-2"
-              >
-                <button
-                  type="button"
-                  onClick={() => {
-                    toggleGroup(category.name);
-                    setSelectedCategoryId(category.id);
-                    setSelectedProductLineId(null);
-                  }}
-                  className={`flex w-full items-center justify-between gap-3 rounded-lg px-2 py-2 text-left transition ${
-                    groupIsActive
-                      ? "bg-slate-800 text-white"
-                      : "text-slate-300 hover:bg-slate-800"
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full border border-slate-700 bg-slate-800 text-xs font-bold text-slate-300">
-                              <span className="absolute">
-                                {category.name.slice(0, 2)}
-                              </span>
-
-                              {category.imageUrl && (
-                                <img
-                                  src={getAssetUrl(category.imageUrl)}
-                                  alt={category.name}
-                                  onError={(event) => {
-                                    event.currentTarget.style.display = "none";
-                                  }}
-                                  className="relative z-10 h-full w-full object-cover"
-                                />
-                              )}
-                            </div>
-
-                    <span className="text-sm font-semibold">
-                      {category.name}
-                    </span>
-                  </div>
-
-                  <span className="text-xs text-slate-400">
-                    {isExpanded ? "▼" : "▶"}
-                  </span>
-                </button>
-
-                {isExpanded && (
-                  <div className="ml-6 mt-2 space-y-1 border-l border-slate-800 pl-3">
-                    {category.children.map((child) => {
-                      const isSelected = selectedProductLineId === child.id;
-
-                      return (
-                        <button
-                          key={child.id}
-                          type="button"
-                          onClick={() => {
-                            setSelectedCategoryId(null);
-                            setSelectedProductLineId(child.id);
-                          }}
-                          className={`flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-sm transition ${
-                            isSelected
-                              ? "bg-slate-700 text-white"
-                              : "text-slate-400 hover:bg-slate-800 hover:text-slate-200"
-                          }`}
-                        >
-                          <span className="text-slate-600">└</span>
-                          <span>{child.name}</span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      </aside>
-
-      <section>
-        <div className="mb-8 rounded-2xl border border-slate-800 bg-slate-900 p-5">
-          <div
-            className={`grid gap-4 transition-all duration-200 ${
-              isFiltering ? "opacity-50 blur-[1px]" : "opacity-100 blur-0"
-            }`}
-          >
-            <div>
-              <label
-                htmlFor="product-search"
-                className="mb-2 block text-sm font-medium text-slate-300"
-              >
-                Buscar productos
-              </label>
-
-              <input
-                id="product-search"
-                type="text"
-                value={searchTerm}
-                onChange={(event) => setSearchTerm(event.target.value)}
-                placeholder="Buscar por nombre, código o descripción..."
-                className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-slate-500"
-              />
-            </div>
-
-            <div>
-              <button
-                type="button"
-                onClick={() => setIsVehicleFiltersOpen((prev) => !prev)}
-                className="flex w-full items-center justify-between rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-left text-sm font-semibold text-slate-100 transition hover:bg-slate-800"
-              >
-                <span>Buscar tu vehículo</span>
-                <span className="text-slate-400">
-                  {isVehicleFiltersOpen ? "▲" : "▼"}
-                </span>
-              </button>
-
-              {isVehicleFiltersOpen && (
-                <div className="mt-4 grid gap-4 md:grid-cols-3">
-                  <div>
-                    <label className="mb-1 block text-sm text-slate-300">
-                      Marca
-                    </label>
-                    <select
-                      value={selectedBrand ?? ""}
-                      onChange={(e) => {
-                        const val = Number(e.target.value);
-                        setSelectedBrand(val || null);
-                        setSelectedModel(null);
-                      }}
-                      className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2 text-slate-200"
-                    >
-                      <option value="">Todas</option>
-                      {brands.map((b) => (
-                        <option key={b.id} value={b.id}>
-                          {b.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="mb-1 block text-sm text-slate-300">
-                      Modelo
-                    </label>
-                    <select
-                      value={selectedModel ?? ""}
-                      onChange={(e) => {
-                        const val = Number(e.target.value);
-                        setSelectedModel(val || null);
-                      }}
-                      disabled={!selectedBrand}
-                      className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2 text-slate-200 disabled:opacity-50"
-                    >
-                      <option value="">Todos</option>
-                      {models.map((m) => (
-                        <option key={m.id} value={m.id}>
-                          {m.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="mb-1 block text-sm text-slate-300">
-                      Año
-                    </label>
-                    <select
-                      value={selectedYear ?? ""}
-                      onChange={(e) => {
-                        const val = Number(e.target.value);
-                        setSelectedYear(val || null);
-                      }}
-                      className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2 text-slate-200"
-                    >
-                      <option value="">Todos</option>
-                      {Array.from({ length: 25 }, (_, i) => {
-                        const year = 2025 - i;
-                        return (
-                          <option key={year} value={year}>
-                            {year}
-                          </option>
-                        );
-                      })}
-                    </select>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            <div>
-              <button
-                type="button"
-                onClick={() => setIsMoreFiltersOpen((prev) => !prev)}
-                className="flex w-full items-center justify-between rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-left text-sm font-semibold text-slate-100 transition hover:bg-slate-800"
-              >
-                <span>Más filtros</span>
-                <span className="text-slate-400">
-                  {isMoreFiltersOpen ? "▲" : "▼"}
-                </span>
-              </button>
-
-              {isMoreFiltersOpen && (
-                <div className="mt-4 grid gap-4 md:grid-cols-2">
-                  <div>
-                    <label
-                      htmlFor="min-price"
-                      className="mb-2 block text-sm font-medium text-slate-300"
-                    >
-                      Precio mínimo
-                    </label>
-
-                    <input
-                      id="min-price"
-                      type="number"
-                      value={minPrice}
-                      onChange={(event) => setMinPrice(event.target.value)}
-                      placeholder="Ej: 100"
-                      className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-slate-500"
-                    />
-                  </div>
-
-                  <div>
-                    <label
-                      htmlFor="max-price"
-                      className="mb-2 block text-sm font-medium text-slate-300"
-                    >
-                      Precio máximo
-                    </label>
-
-                    <input
-                      id="max-price"
-                      type="number"
-                      value={maxPrice}
-                      onChange={(event) => setMaxPrice(event.target.value)}
-                      placeholder="Ej: 1000"
-                      className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-slate-500"
-                    />
-                  </div>
-                </div>
-              )}
-            </div>
+            />
           </div>
 
-          {hasActiveFilters && (
-            <button
-              type="button"
-              onClick={clearFilters}
-              className="mt-4 rounded-xl bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-500"
-            >
-              Limpiar filtros
-            </button>
-          )}
-        </div>
-
-        <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+      <div className="mb-3 flex flex-col gap-2 md:mb-4 md:flex-row md:items-center md:justify-between">
           <p className="text-sm text-slate-400">
             Mostrando {catalogProducts.length} de {totalProducts} resultados
           </p>
@@ -621,7 +419,7 @@ export function ProductCatalog({ products }: ProductCatalogProps) {
         </div>
 
         {hasActiveFilters && (
-          <div className="mb-6 flex flex-wrap gap-2">
+          <div className="mb-4 flex flex-wrap gap-2 lg:mb-6">
             {searchTerm && (
               <button
                 type="button"
@@ -728,14 +526,14 @@ export function ProductCatalog({ products }: ProductCatalogProps) {
         )}
 
         {isFiltering ? (
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
             {Array.from({ length: 6 }).map((_, index) => (
               <ProductCardSkeleton key={index} />
             ))}
           </div>
         ) : filteredProducts.length > 0 ? (
           <>
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
               {paginatedProducts.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
