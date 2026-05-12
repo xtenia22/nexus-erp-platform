@@ -1,9 +1,12 @@
 import { ProductCatalog } from "@/components/catalog/product-catalog";
-import { getProducts } from "@/services/api";
+import { getProducts, getCategories, getBrands } from "@/services/api";
 
 export default async function ProductsPage() {
   const productsResponse = await getProducts();
   const products = productsResponse.items;
+
+  const categories = await getCategories();
+  const brands = await getBrands();
 
   return (
     <main className="min-h-screen bg-slate-950 text-slate-100">
@@ -22,7 +25,11 @@ export default async function ProductsPage() {
           </p>
         </div>
 
-        <ProductCatalog products={products} />
+        <ProductCatalog
+          products={products}
+          categoryTreeInitial={categories}
+          brandsInitial={brands}
+        />
       </section>
     </main>
   );

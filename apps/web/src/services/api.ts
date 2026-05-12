@@ -1,6 +1,17 @@
 import { Product } from "@/types/product";
 
-const API_URL = "http://localhost:3001/api";
+
+
+function getApiUrl() {
+  if (typeof window === "undefined") {
+    return process.env.API_URL || "http://api:3001/api";
+  }
+
+  return (
+    process.env.NEXT_PUBLIC_API_URL ||
+    `${window.location.protocol}//${window.location.hostname}:3001/api`
+  );
+}
 
 type ProductFilters = {
   search?: string;
@@ -17,7 +28,7 @@ type ProductFilters = {
 };
 
 export async function getHealth() {
-  const response = await fetch(`${API_URL}/health`);
+  const response = await fetch(`${getApiUrl()}/health`);
 
   if (!response.ok) {
     throw new Error("API Request failed");
@@ -45,7 +56,7 @@ export async function getProducts(filters: ProductFilters = {}) {
   const queryString = params.toString();
 
   const response = await fetch(
-    `${API_URL}/products${queryString ? `?${queryString}` : ""}`,
+    `${getApiUrl()}/products${queryString ? `?${queryString}` : ""}`,
     {
       cache: "no-store",
     }
@@ -59,7 +70,7 @@ export async function getProducts(filters: ProductFilters = {}) {
 }
 
 export async function getProductById(id: string): Promise<Product | null> {
-  const response = await fetch(`${API_URL}/products/${id}`);
+  const response = await fetch(`${getApiUrl()}/products/${id}`);
 
   if (response.status === 404) {
     return null;
@@ -73,7 +84,7 @@ export async function getProductById(id: string): Promise<Product | null> {
 }
 
 export async function getBrands() {
-  const response = await fetch(`${API_URL}/products/brands`);
+  const response = await fetch(`${getApiUrl()}/products/brands`);
 
   if (!response.ok) {
     throw new Error("Brands request failed");
@@ -85,7 +96,7 @@ export async function getBrands() {
 export async function getModels(brandId: number) {
   if (!brandId) return [];
 
-  const response = await fetch(`${API_URL}/products/models?brandId=${brandId}`);
+  const response = await fetch(`${getApiUrl()}/products/models?brandId=${brandId}`);
 
   if (!response.ok) {
     throw new Error("Models request failed");
@@ -107,7 +118,10 @@ export type CategoryTreeItem = {
 };
 
 export async function getCategories(): Promise<CategoryTreeItem[]> {
-  const response = await fetch(`${API_URL}/products/categories`);
+ 
+  const response = await fetch(`${getApiUrl()}/products/categories`, {
+   cache:"no-store",
+  });
 
   if (!response.ok) {
     throw new Error("Categories request failed");
@@ -115,3 +129,4 @@ export async function getCategories(): Promise<CategoryTreeItem[]> {
 
   return response.json();
 }
+

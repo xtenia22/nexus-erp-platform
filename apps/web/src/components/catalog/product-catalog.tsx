@@ -18,11 +18,14 @@ import {
 import { CategorySidebar } from "@/components/catalog/category-sidebar";
 import { FilterPanel } from "@/components/catalog/filter-panel";
 
+
 type ProductCatalogProps = {
   products: Product[];
+  categoryTreeInitial: CategoryTreeItem[];
+  brandsInitial: any[];
 };
 
-export function ProductCatalog({ products }: ProductCatalogProps) {
+export function ProductCatalog({products,categoryTreeInitial, brandsInitial,}: ProductCatalogProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -65,7 +68,7 @@ export function ProductCatalog({ products }: ProductCatalogProps) {
 
   const [currentPage, setCurrentPage] = useState(1);
 
-  const [brands, setBrands] = useState<any[]>([]);
+  const [brands, setBrands] = useState<any[]>(brandsInitial);
   const [models, setModels] = useState<any[]>([]);
 
   const [selectedBrand, setSelectedBrand] = useState<number | null>(() => {
@@ -90,7 +93,8 @@ export function ProductCatalog({ products }: ProductCatalogProps) {
   const [catalogProducts, setCatalogProducts] = useState(products);
   const [totalProducts, setTotalProducts] = useState(products.length);
   const [backendTotalPages, setBackendTotalPages] = useState(1);
-  const [categoryTree, setCategoryTree] = useState<CategoryTreeItem[]>([]);
+ 
+  const [categoryTree, setCategoryTree] =  useState<CategoryTreeItem[]>(categoryTreeInitial);
 
   const [isVehicleFiltersOpen, setIsVehicleFiltersOpen] = useState(false);
   const [isMoreFiltersOpen, setIsMoreFiltersOpen] = useState(false);
@@ -107,9 +111,7 @@ export function ProductCatalog({ products }: ProductCatalogProps) {
     }
   }, [minPrice, maxPrice]);
 
-  useEffect(() => {
-    getCategories().then(setCategoryTree);
-  }, []);
+  
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -162,9 +164,7 @@ export function ProductCatalog({ products }: ProductCatalogProps) {
     currentPage,
   ]);
 
-  useEffect(() => {
-    getBrands().then(setBrands);
-  }, []);
+  
 
   useEffect(() => {
     if (!selectedBrand) {

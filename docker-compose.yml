@@ -1,0 +1,27 @@
+services:
+
+  api:
+    build:
+      context: ./apps/api
+    container_name: nexus-api
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./apps/api:/app
+      - /app/node_modules
+    command: sh -c "npx prisma generate && npm run start:dev"  
+    
+
+  web:
+    build:
+      context: ./apps/web
+    container_name: nexus-web
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./apps/web:/app
+      - /app/node_modules
+    environment:
+        API_URL: http://api:3001/api
+        NEXT_PUBLIC_API_URL: http://10.36.13.170:3001/api
+    command: npm run dev
