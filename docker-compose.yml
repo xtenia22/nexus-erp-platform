@@ -22,6 +22,6 @@ services:
       - ./apps/web:/app
       - /app/node_modules
     environment:
-        API_URL: http://api:3001/api
-        NEXT_PUBLIC_API_URL: http://10.36.13.170:3001/api
+       API_URL: http://api:3001/api
+       NEXT_PUBLIC_API_URL: http://192.168.1.64:3001/api
     command: npm run dev
