@@ -10,7 +10,7 @@ type ProductCardProps = {
 
 function formatYearRange(product: Product) {
   if (!product.yearFrom && !product.yearTo) {
-    return "Años no especificados";
+    return  company.content.productCard.unspecifiedYears;
   }
 
   if (product.yearFrom && !product.yearTo) {

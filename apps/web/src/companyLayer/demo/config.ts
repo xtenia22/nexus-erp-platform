@@ -143,9 +143,18 @@ export const demoCompany: CompanyConfig = {
       noImage: "Sin Imagen",
       yearsLabel: "Aplicacion",
       detailCta: "Ver",
+      unspecifiedYears:"Aplicacion no especificada",
     },  
 
-    
+    productDetail: {
+      yearsLabel: "Aplicación",
+      priceNote: "Precio de referencia sujeto a disponibilidad",
+      brochureCta: "Ver ficha técnica",
+      videoCta: "Ver video",
+      notFoundTitle: "Producto no disponible",
+      notFoundDescription: "El producto solicitado no existe o ya no se encuentra disponible.",
+      unspecifiedYears:"Aplicacion no especificada",
+    },
 
   },
 

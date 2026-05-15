@@ -102,7 +102,7 @@ export const braccoCompany: CompanyConfig = {
       maxPricePlaceholder: "Ej: 1000",
       clearFilters: "Limpiar filtros",
     },   
-    
+
     activeFilters: {
       searchPrefix: "Buscar",
       categoryPrefix: "Categoría",
@@ -144,8 +144,19 @@ export const braccoCompany: CompanyConfig = {
       noImage: "Sin Imagen",
       yearsLabel: "Años",
       detailCta: "Ver",
+      unspecifiedYears: "Años no especificados",
     },
-
+    
+    productDetail: {
+      yearsLabel: "Años",
+      priceNote: "Precio online con IVA incluido, sin instalación, sin flete",
+      brochureCta: "Descargar folleto",
+      videoCta: "Ver video",
+      notFoundTitle: "Producto no encontrado",
+      notFoundDescription:
+        "El producto que intentaste abrir no existe o no está disponible.",
+      unspecifiedYears:"Años no especificados",
+    },
 
     
 

@@ -5,7 +5,7 @@ type FilterPanelProps = {
   searchTerm: string;
   minPrice: string;
   maxPrice: string;
-  sortBy: string;
+
 
   brands: any[];
   models: any[];
@@ -22,7 +22,7 @@ type FilterPanelProps = {
   onSearchChange: (value: string) => void;
   onMinPriceChange: (value: string) => void;
   onMaxPriceChange: (value: string) => void;
-  onSortChange: (value: string) => void;
+
 
   onBrandChange: (value: number | null) => void;
   onModelChange: (value: number | null) => void;
@@ -211,7 +211,7 @@ export function FilterPanel({
                   type="number"
                   value={maxPrice}
                   onChange={(event) => onMaxPriceChange(event.target.value)}
-                  placeholder={labels.minPricePlaceholder}
+                  placeholder={labels.maxPricePlaceholder}
                   className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-slate-500"
                 />
               </div>

@@ -3,6 +3,7 @@ import { getProductById } from "@/services/api";
 import { getAssetUrl, isValidExternalUrl } from "@/lib/assets";
 import { Product } from "@/types/product";
 import { ProductGallery } from "@/components/catalog/product-gallery";
+import {company} from "@/companyLayer/company.config"
 
 type ProductDetailPageProps = {
   params: Promise<{
@@ -10,9 +11,9 @@ type ProductDetailPageProps = {
   }>;
 };
 
-function formatYearRange(product: Product) {
+function formatYearRange(product: Product, unspecifiedYears: string) {
   if (!product.yearFrom && !product.yearTo) {
-    return "Años no especificados";
+    return unspecifiedYears;
   }
 
   if (product.yearFrom && !product.yearTo) {
@@ -68,11 +69,12 @@ export default async function ProductDetailPage({
             </p>
 
             <p className="text-sm text-slate-400">
-              Años: {formatYearRange(product)}
+             {company.content.productDetail.yearsLabel}:{" "}
+             {formatYearRange(product, company.content.productDetail.unspecifiedYears)}
             </p>
 
             <p className="text-xl font-medium text-green-400">
-              $ {product.price} (Precio online con IVA incluído, Sin instalación, Sin flete)
+              $ {product.price}  ({company.content.productDetail.priceNote})
             </p>
 
             {/* ACCIONES */}
@@ -84,7 +86,7 @@ export default async function ProductDetailPage({
                   rel="noreferrer"
                   className="rounded-xl border border-slate-700 px-4 py-2 text-sm text-slate-200 transition hover:bg-slate-800"
                 >
-                  Descargar folleto
+                  {company.content.productDetail.brochureCta}
                 </a>
               )}
 
@@ -95,7 +97,7 @@ export default async function ProductDetailPage({
                   rel="noreferrer"
                   className="rounded-xl border border-slate-700 px-4 py-2 text-sm text-slate-200 transition hover:bg-slate-800"
                 >
-                  Ver video
+                  {company.content.productDetail.videoCta}
                 </a>
               )}
             </div>

@@ -61,6 +61,8 @@ export type CompanyContent = {
     heroPreviewItems: string[];
 
   };
+
+
   catalog: {
     title: string;
     subtitle: string;
@@ -124,9 +126,18 @@ export type CompanyContent = {
     noImage: string;
     yearsLabel: string;
     detailCta: string;
+    unspecifiedYears: string;
   };
 
-
+ productDetail: {
+  yearsLabel: string;
+  priceNote: string;
+  brochureCta: string;
+  videoCta: string;
+  notFoundTitle: string;
+  notFoundDescription: string;
+  unspecifiedYears: string;
+};
  
 
 };
