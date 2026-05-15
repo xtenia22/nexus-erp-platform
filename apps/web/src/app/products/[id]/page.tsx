@@ -4,6 +4,7 @@ import { getAssetUrl, isValidExternalUrl } from "@/lib/assets";
 import { Product } from "@/types/product";
 import { ProductGallery } from "@/components/catalog/product-gallery";
 import {company} from "@/companyLayer/company.config"
+import { ProductDetailInfo } from "@/components/catalog/product-detail-info";
 
 type ProductDetailPageProps = {
   params: Promise<{
@@ -39,8 +40,8 @@ export default async function ProductDetailPage({
 
   return (
     <main className="min-h-screen bg-slate-950 text-slate-100">
-      <section className="mx-auto max-w-6xl px-6 py-16">
-        <div className="grid gap-8 md:grid-cols-2">
+      <section className="mx-auto max-w-6xl px-4 py-8 md:px-6 md:py-12 lg:py-16">
+        <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:gap-10">
           {/* IMÁGENES */}
           
           <ProductGallery
@@ -49,59 +50,11 @@ export default async function ProductDetailPage({
           />
 
           {/* INFO */}
-          <div className="space-y-4">
-            <div className="flex flex-wrap gap-2">
-              <span className="rounded-full border border-slate-700 px-3 py-1 text-xs text-slate-300">
-                {product.category}
-              </span>
-
-              <span className="rounded-full border border-slate-700 px-3 py-1 text-xs text-slate-300">
-                {product.code}
-              </span>
-            </div>
-
-            <h1 className="text-2xl font-semibold text-slate-100">
-              {product.name}
-            </h1>
-
-            <p className="text-sm text-slate-400">
-              {product.brand} / {product.model}
-            </p>
-
-            <p className="text-sm text-slate-400">
-             {company.content.productDetail.yearsLabel}:{" "}
-             {formatYearRange(product, company.content.productDetail.unspecifiedYears)}
-            </p>
-
-            <p className="text-xl font-medium text-green-400">
-              $ {product.price}  ({company.content.productDetail.priceNote})
-            </p>
-
-            {/* ACCIONES */}
-            <div className="flex flex-wrap gap-3 pt-4">
-              {brochure && (
-                <a
-                  href={brochure}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="rounded-xl border border-slate-700 px-4 py-2 text-sm text-slate-200 transition hover:bg-slate-800"
-                >
-                  {company.content.productDetail.brochureCta}
-                </a>
-              )}
-
-              {isValidExternalUrl(product.videoUrl) && (
-                <a
-                  href={product.videoUrl as string}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="rounded-xl border border-slate-700 px-4 py-2 text-sm text-slate-200 transition hover:bg-slate-800"
-                >
-                  {company.content.productDetail.videoCta}
-                </a>
-              )}
-            </div>
-          </div>
+          <ProductDetailInfo
+              product={product}
+              brochureUrl={brochure}
+              videoUrl={isValidExternalUrl(product.videoUrl) ? product.videoUrl : null}
+            />
         </div>
       </section>
     </main>

@@ -169,6 +169,16 @@ export const braccoCompany: CompanyConfig = {
       notFoundDescription:
         "El producto que intentaste abrir no existe o no está disponible.",
       unspecifiedYears:"Años no especificados",
+
+      specsTitle: "Ficha técnica",
+        specLabels: {
+          code: "Código",
+          category: "Categoría",
+          brand: "Marca",
+          model: "Modelo",
+          years: "Años",
+        },  
+
     },
 
     

@@ -170,6 +170,15 @@ export const demoCompany: CompanyConfig = {
       notFoundTitle: "Producto no disponible",
       notFoundDescription: "El producto solicitado no existe o ya no se encuentra disponible.",
       unspecifiedYears:"Aplicacion no especificada",
+
+      specsTitle: "Información del producto",
+      specLabels: {
+        code: "Código",
+        category: "Sección",
+        brand: "Marca",
+        model: "Modelo",
+        years: "Aplicación",
+      },
     },
 
   },

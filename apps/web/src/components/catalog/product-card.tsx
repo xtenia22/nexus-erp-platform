@@ -20,6 +20,14 @@ function formatYearRange(product: Product) {
   return `${product.yearFrom ?? ""} - ${product.yearTo ?? ""}`;
 }
 
+function formatPrice(price: number) {
+  return new Intl.NumberFormat("es-AR", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(price);
+}
+
+
 export function ProductCard({ product }: ProductCardProps) {
   const imageUrl = getAssetUrl(product.image1Url);
 
@@ -65,7 +73,7 @@ export function ProductCard({ product }: ProductCardProps) {
 
           <div className="flex items-center justify-between gap-3 pt-1">
             <p className="text-base font-bold text-green-400 lg:text-lg">
-              $ {product.price}
+              $ {formatPrice(product.price)}
             </p>
 
             <span className="text-xs font-medium text-slate-400 transition group-hover:text-slate-100 lg:text-sm">

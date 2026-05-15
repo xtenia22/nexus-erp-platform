@@ -153,6 +153,17 @@ export type CompanyContent = {
   notFoundTitle: string;
   notFoundDescription: string;
   unspecifiedYears: string;
+  
+  specsTitle: string;
+  specLabels: {
+      code: string;
+      category: string;
+      brand: string;
+      model: string;
+      years: string;
+    };
+
+
 };
  
 
