@@ -74,7 +74,7 @@ export function CategorySidebar({
                 key={category.id}
                 type="button"
                 onClick={() => onSelectCategory(category.id)}
-                className={`min-w-[92px] snap-start rounded-2xl border p-2 text-center transition ${
+                className={`min-w-[115px] snap-start rounded-2xl border p-2 text-center transition ${
                   isSelected
                     ? "bg-slate-800"
                     : "border-slate-800 bg-slate-950/70 hover:bg-slate-800"

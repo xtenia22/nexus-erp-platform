@@ -5,11 +5,14 @@ type FilterPanelProps = {
   searchTerm: string;
   minPrice: string;
   maxPrice: string;
+
   brands: any[];
   models: any[];
+
   selectedBrand: number | null;
   selectedModel: number | null;
   selectedYear: number | null;
+
   isFiltering: boolean;
   isVehicleFiltersOpen: boolean;
   isMoreFiltersOpen: boolean;
@@ -18,7 +21,6 @@ type FilterPanelProps = {
   onSearchChange: (value: string) => void;
   onMinPriceChange: (value: string) => void;
   onMaxPriceChange: (value: string) => void;
-
 
   onBrandChange: (value: number | null) => void;
   onModelChange: (value: number | null) => void;
@@ -53,17 +55,18 @@ export function FilterPanel({
   onClearFilters,
 }: FilterPanelProps) {
   const labels = company.content.catalog.filterPanel;
+
   return (
-    <div className="mb-4 rounded-2xl border border-slate-800 bg-slate-900 p-4 lg:mb-8 lg:p-5">
+    <div className="mb-4 rounded-2xl border border-slate-800 bg-slate-900 p-3 lg:mb-8 lg:p-5">
       <div
-        className={`grid gap-4 transition-all duration-200 ${
+        className={`grid gap-3 transition-all duration-200 lg:gap-4 ${
           isFiltering ? "opacity-50 blur-[1px]" : "opacity-100 blur-0"
         }`}
       >
         <div>
           <label
             htmlFor="product-search"
-            className="mb-2 block text-sm font-medium text-slate-300"
+            className="mb-1.5 block text-xs font-medium text-slate-300 lg:mb-2 lg:text-sm"
           >
             {labels.searchLabel}
           </label>
@@ -74,7 +77,7 @@ export function FilterPanel({
             value={searchTerm}
             onChange={(event) => onSearchChange(event.target.value)}
             placeholder={company.content.catalog.searchPlaceholder}
-            className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-slate-500"
+            className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2.5 text-sm text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-slate-500 lg:px-4 lg:py-3"
           />
         </div>
 
@@ -82,29 +85,30 @@ export function FilterPanel({
           <button
             type="button"
             onClick={onToggleVehicleFilters}
-            className="flex w-full items-center justify-between rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-left text-sm font-semibold text-slate-100 transition hover:bg-slate-800"
+            className="flex w-full items-center justify-between rounded-xl border border-slate-700 bg-slate-950 px-3 py-2.5 text-left text-sm font-semibold text-slate-100 transition hover:bg-slate-800 lg:px-4 lg:py-3"
           >
-            <span>{company.content.catalog.vehicleFilterTitle}  </span>
-            <span className="text-slate-400">
+            <span>{company.content.catalog.vehicleFilterTitle}</span>
+            <span className="text-xs text-slate-400">
               {isVehicleFiltersOpen ? "▲" : "▼"}
             </span>
           </button>
 
           {isVehicleFiltersOpen && (
-            <div className="mt-4 grid gap-4 md:grid-cols-3">
+            <div className="mt-3 grid gap-3 md:grid-cols-3 lg:mt-4 lg:gap-4">
               <div>
-                <label className="mb-1 block text-sm text-slate-300">
+                <label className="mb-1 block text-xs text-slate-300 lg:text-sm">
                   {labels.brandLabel}
                 </label>
+
                 <select
                   value={selectedBrand ?? ""}
                   onChange={(event) => {
                     const value = Number(event.target.value);
                     onBrandChange(value || null);
                   }}
-                  className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2 text-slate-200"
+                  className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-200"
                 >
-                  <option value="">{labels.allBrandsOption} </option>
+                  <option value="">{labels.allBrandsOption}</option>
                   {brands.map((brand) => (
                     <option key={brand.id} value={brand.id}>
                       {brand.name}
@@ -114,9 +118,10 @@ export function FilterPanel({
               </div>
 
               <div>
-                <label className="mb-1 block text-sm text-slate-300">
+                <label className="mb-1 block text-xs text-slate-300 lg:text-sm">
                   {labels.modelLabel}
                 </label>
+
                 <select
                   value={selectedModel ?? ""}
                   onChange={(event) => {
@@ -124,9 +129,9 @@ export function FilterPanel({
                     onModelChange(value || null);
                   }}
                   disabled={!selectedBrand}
-                  className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2 text-slate-200 disabled:opacity-50"
+                  className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-200 disabled:opacity-50"
                 >
-                  <option value=""> {labels.allModelsOption} </option>
+                  <option value="">{labels.allModelsOption}</option>
                   {models.map((model) => (
                     <option key={model.id} value={model.id}>
                       {model.name}
@@ -136,18 +141,19 @@ export function FilterPanel({
               </div>
 
               <div>
-                <label className="mb-1 block text-sm text-slate-300">
+                <label className="mb-1 block text-xs text-slate-300 lg:text-sm">
                   {labels.yearLabel}
                 </label>
+
                 <select
                   value={selectedYear ?? ""}
                   onChange={(event) => {
                     const value = Number(event.target.value);
                     onYearChange(value || null);
                   }}
-                  className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2 text-slate-200"
+                  className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-200"
                 >
-                  <option value="">{labels.allYearsOption} </option>
+                  <option value="">{labels.allYearsOption}</option>
                   {Array.from({ length: 25 }, (_, index) => {
                     const year = 2025 - index;
                     return (
@@ -162,24 +168,24 @@ export function FilterPanel({
           )}
         </div>
 
-        <div>
+        <div className="hidden md:block">
           <button
             type="button"
             onClick={onToggleMoreFilters}
-            className="flex w-full items-center justify-between rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-left text-sm font-semibold text-slate-100 transition hover:bg-slate-800"
+            className="flex w-full items-center justify-between rounded-xl border border-slate-700 bg-slate-950 px-3 py-2.5 text-left text-sm font-semibold text-slate-100 transition hover:bg-slate-800 lg:px-4 lg:py-3"
           >
-            <span> {company.content.catalog.moreFiltersTitle} </span>
-            <span className="text-slate-400">
+            <span>{company.content.catalog.moreFiltersTitle}</span>
+            <span className="text-xs text-slate-400">
               {isMoreFiltersOpen ? "▲" : "▼"}
             </span>
           </button>
 
           {isMoreFiltersOpen && (
-            <div className="mt-4 grid gap-4 md:grid-cols-2">
+            <div className="mt-3 grid gap-3 md:grid-cols-2 lg:mt-4 lg:gap-4">
               <div>
                 <label
                   htmlFor="min-price"
-                  className="mb-2 block text-sm font-medium text-slate-300"
+                  className="mb-1 block text-xs font-medium text-slate-300 lg:mb-2 lg:text-sm"
                 >
                   {labels.minPriceLabel}
                 </label>
@@ -190,14 +196,14 @@ export function FilterPanel({
                   value={minPrice}
                   onChange={(event) => onMinPriceChange(event.target.value)}
                   placeholder={labels.minPricePlaceholder}
-                  className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-slate-500"
+                  className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-slate-500 lg:px-4 lg:py-3"
                 />
               </div>
 
               <div>
                 <label
                   htmlFor="max-price"
-                  className="mb-2 block text-sm font-medium text-slate-300"
+                  className="mb-1 block text-xs font-medium text-slate-300 lg:mb-2 lg:text-sm"
                 >
                   {labels.maxPriceLabel}
                 </label>
@@ -208,7 +214,7 @@ export function FilterPanel({
                   value={maxPrice}
                   onChange={(event) => onMaxPriceChange(event.target.value)}
                   placeholder={labels.maxPricePlaceholder}
-                  className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-slate-500"
+                  className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-slate-500 lg:px-4 lg:py-3"
                 />
               </div>
             </div>
@@ -220,10 +226,10 @@ export function FilterPanel({
         <button
           type="button"
           onClick={onClearFilters}
-          className="mt-4 rounded-xl bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-500"
+          className="mt-3 rounded-xl px-3 py-2 text-xs font-medium text-white transition hover:opacity-90 lg:mt-4 lg:px-4 lg:text-sm"
           style={companyStyles.primaryButton}
         >
-         {labels.clearFilters}
+          {labels.clearFilters}
         </button>
       )}
     </div>

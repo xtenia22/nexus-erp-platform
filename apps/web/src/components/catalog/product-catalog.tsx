@@ -398,15 +398,29 @@ export function ProductCatalog({products,categoryTreeInitial, brandsInitial,}: P
             />
           </div>
 
-      <div className="mb-3 flex flex-col gap-2 md:mb-4 md:flex-row md:items-center md:justify-between">
-          <p className="text-sm text-slate-400">
-           {catalogLabels.resultsSummary.showing} {catalogProducts.length}{" "}
-           {catalogLabels.resultsSummary.of} {totalProducts}{" "}
-           {catalogLabels.resultsSummary.results}
+      <div className="mb-3 flex items-center justify-between gap-3">
+          <p className="min-w-0 text-xs text-slate-400 md:text-sm">
+            <span className="hidden sm:inline">
+              {catalogLabels.resultsSummary.showing}{" "}
+            </span>
+
+            <span className="font-medium text-slate-200">
+              {catalogProducts.length}
+            </span>{" "}
+            {catalogLabels.resultsSummary.of}{" "}
+            <span className="font-medium text-slate-200">
+              {totalProducts}
+            </span>{" "}
+            <span className="hidden sm:inline">
+              {catalogLabels.resultsSummary.results}
+            </span>
           </p>
 
-          <div className="flex items-center gap-2">
-            <label htmlFor="sort-by" className="text-sm text-slate-400">
+          <div className="flex shrink-0 items-center gap-2">
+            <label
+              htmlFor="sort-by"
+              className="hidden text-xs text-slate-400 sm:block md:text-sm"
+            >
               {catalogLabels.sorting.label}:
             </label>
 
@@ -414,7 +428,7 @@ export function ProductCatalog({products,categoryTreeInitial, brandsInitial,}: P
               id="sort-by"
               value={sortBy}
               onChange={(event) => setSortBy(event.target.value)}
-              className="rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-slate-500"
+              className="w-[135px] rounded-xl border border-slate-700 bg-slate-950 px-2.5 py-2 text-xs text-slate-100 outline-none transition focus:border-slate-500 md:w-[170px] md:px-3 md:text-sm"
             >
               <option value="">{catalogLabels.sorting.defaultOption}</option>
               <option value="name-asc">{catalogLabels.sorting.nameAsc}</option>
@@ -426,19 +440,19 @@ export function ProductCatalog({products,categoryTreeInitial, brandsInitial,}: P
         </div>
 
         {hasActiveFilters && (
-          <div className="mb-4 flex flex-wrap gap-2 lg:mb-6">
+          <div className="mb-4 flex flex-wrap gap-1.5 lg:mb-6 lg:gap-2">
             {searchTerm && (
               <button
                 type="button"
                 onClick={() => setSearchTerm("")}
-               className="flex items-center gap-2 rounded-full border px-3 py-1 text-sm transition hover:opacity-90"
+                className="flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs transition hover:opacity-90 lg:gap-2 lg:px-3 lg:text-sm"
                   style={{
                     borderColor: companyStyles.primaryColor,
                     color: companyStyles.primaryColor,
                   }}
               >
                { catalogLabels.activeFilters.searchPrefix}: {searchTerm}
-                <span>✕</span>
+                <span className="text-[10px] opacity-70 lg:text-xs">✕</span>
               </button>
             )}
 
@@ -446,14 +460,14 @@ export function ProductCatalog({products,categoryTreeInitial, brandsInitial,}: P
               <button
                 type="button"
                 onClick={() => setSelectedCategoryId(null)}
-                className="flex items-center gap-2 rounded-full border px-3 py-1 text-sm transition hover:opacity-90"
+                className="flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs transition hover:opacity-90 lg:gap-2 lg:px-3 lg:text-sm"
                   style={{
                     borderColor: companyStyles.primaryColor,
                     color: companyStyles.primaryColor,
                   }}
               >
                 {catalogLabels.activeFilters.categoryPrefix}: {activeCategory.name}
-                <span>✕</span>
+               <span className="text-[10px] opacity-70 lg:text-xs">✕</span>
               </button>
             )}
 
@@ -461,14 +475,14 @@ export function ProductCatalog({products,categoryTreeInitial, brandsInitial,}: P
               <button
                 type="button"
                 onClick={() => setSelectedProductLineId(null)}
-               className="flex items-center gap-2 rounded-full border px-3 py-1 text-sm transition hover:opacity-90"
+               className="flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs transition hover:opacity-90 lg:gap-2 lg:px-3 lg:text-sm"
                 style={{
                   borderColor: companyStyles.primaryColor,
                   color: companyStyles.primaryColor,
                 }}
               >
                 {catalogLabels.activeFilters.productLinePrefix}: {activeProductLine.name}
-                <span>✕</span>
+                <span className="text-[10px] opacity-70 lg:text-xs">✕</span>
               </button>
             )}
 
@@ -480,14 +494,14 @@ export function ProductCatalog({products,categoryTreeInitial, brandsInitial,}: P
                   setSelectedModel(null);
                   setModels([]);
                 }}
-               className="flex items-center gap-2 rounded-full border px-3 py-1 text-sm transition hover:opacity-90"
+               className="flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs transition hover:opacity-90 lg:gap-2 lg:px-3 lg:text-sm"
                 style={{
                   borderColor: companyStyles.primaryColor,
                   color: companyStyles.primaryColor,
                 }}
               >
                 {brands.find((b) => b.id === selectedBrand)?.name}
-                <span>✕</span>
+                <span className="text-[10px] opacity-70 lg:text-xs">✕</span>
               </button>
             )}
 
@@ -495,14 +509,14 @@ export function ProductCatalog({products,categoryTreeInitial, brandsInitial,}: P
               <button
                 type="button"
                 onClick={() => setSelectedModel(null)}
-                className="flex items-center gap-2 rounded-full border px-3 py-1 text-sm transition hover:opacity-90"
+                className="flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs transition hover:opacity-90 lg:gap-2 lg:px-3 lg:text-sm"
                     style={{
                       borderColor: companyStyles.primaryColor,
                       color: companyStyles.primaryColor,
                     }}
               >
                 {models.find((m) => m.id === selectedModel)?.name}
-                <span>✕</span>
+               <span className="text-[10px] opacity-70 lg:text-xs">✕</span>
               </button>
             )}
 
@@ -510,14 +524,14 @@ export function ProductCatalog({products,categoryTreeInitial, brandsInitial,}: P
               <button
                 type="button"
                 onClick={() => setSelectedYear(null)}
-               className="flex items-center gap-2 rounded-full border px-3 py-1 text-sm transition hover:opacity-90"
+              className="flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs transition hover:opacity-90 lg:gap-2 lg:px-3 lg:text-sm"
                   style={{
                     borderColor: companyStyles.primaryColor,
                     color: companyStyles.primaryColor,
                   }}
               >
                 {catalogLabels.activeFilters.yearPrefix}: {selectedYear}
-                <span>✕</span>
+                <span className="text-[10px] opacity-70 lg:text-xs">✕</span>
               </button>
             )}
 
@@ -525,14 +539,14 @@ export function ProductCatalog({products,categoryTreeInitial, brandsInitial,}: P
               <button
                 type="button"
                 onClick={() => setMinPrice("")}
-             className="flex items-center gap-2 rounded-full border px-3 py-1 text-sm transition hover:opacity-90"
+             className="flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs transition hover:opacity-90 lg:gap-2 lg:px-3 lg:text-sm"
                 style={{
                   borderColor: companyStyles.primaryColor,
                   color: companyStyles.primaryColor,
                 }}
               >
                 {catalogLabels.activeFilters.minPricePrefix}: {minPrice}
-                <span>✕</span>
+               <span className="text-[10px] opacity-70 lg:text-xs">✕</span>
               </button>
             )}
 
@@ -540,14 +554,14 @@ export function ProductCatalog({products,categoryTreeInitial, brandsInitial,}: P
               <button
                 type="button"
                 onClick={() => setMaxPrice("")}
-              className="flex items-center gap-2 rounded-full border px-3 py-1 text-sm transition hover:opacity-90"
+              className="flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs transition hover:opacity-90 lg:gap-2 lg:px-3 lg:text-sm"
                 style={{
                   borderColor: companyStyles.primaryColor,
                   color: companyStyles.primaryColor,
                 }}
               >
                 {catalogLabels.activeFilters.maxPricePrefix}: {maxPrice}
-                <span>✕</span>
+                <span className="text-[10px] opacity-70 lg:text-xs">✕</span>
               </button>
             )}
 
@@ -555,14 +569,14 @@ export function ProductCatalog({products,categoryTreeInitial, brandsInitial,}: P
               <button
                 type="button"
                 onClick={() => setSortBy("")}
-              className="flex items-center gap-2 rounded-full border px-3 py-1 text-sm transition hover:opacity-90"
+                className="flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs transition hover:opacity-90 lg:gap-2 lg:px-3 lg:text-sm"
                 style={{
                   borderColor: companyStyles.primaryColor,
                   color: companyStyles.primaryColor,
                 }}
               >
                 {catalogLabels.activeFilters.sortApplied}
-                <span>✕</span>
+               <span className="text-[10px] opacity-70 lg:text-xs">✕</span>
               </button>
             )}
           </div>

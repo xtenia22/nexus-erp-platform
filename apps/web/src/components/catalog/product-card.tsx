@@ -26,7 +26,7 @@ export function ProductCard({ product }: ProductCardProps) {
   return (
     <Link href={`/products/${product.id}`} className="group block h-full">
       <article className="h-full overflow-hidden rounded-2xl border border-slate-800 bg-slate-900 shadow-sm transition-all duration-300 ease-out group-hover:-translate-y-1 group-hover:scale-[1.01] group-hover:border-slate-600 group-hover:bg-slate-800/70 group-hover:shadow-xl group-hover:shadow-black/20">
-        <div className="relative aspect-[4/3] overflow-hidden border-b border-slate-800 bg-slate-950">
+        <div className="relative aspect-[16/10] overflow-hidden border-b border-slate-800 bg-slate-950">
           {imageUrl ? (
             <img
               src={imageUrl}
