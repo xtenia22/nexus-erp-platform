@@ -1,5 +1,7 @@
 import { getAssetUrl } from "@/lib/assets";
 import { type CategoryTreeItem } from "@/services/api";
+import { companyStyles } from "@/companyLayer/company.styles";
+import { company } from "@/companyLayer/company.config";
 
 type CategorySidebarProps = {
   categoryTree: CategoryTreeItem[];
@@ -26,7 +28,7 @@ export function CategorySidebar({
     <aside className="rounded-2xl border border-slate-800 bg-slate-900 p-4 lg:p-5">
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-400">
-          Categorías
+          {company.content.catalog.categoriesTitle}
         </h2>
 
         {(selectedCategoryId || selectedProductLineId) && (
@@ -35,7 +37,7 @@ export function CategorySidebar({
             onClick={onClearCategory}
             className="text-xs text-slate-400 hover:text-slate-200"
           >
-            Todas
+            {company.content.catalog.allCategoriesLabel}
           </button>
         )}
       </div>
@@ -61,11 +63,19 @@ export function CategorySidebar({
                   onToggleGroup(category.name);
                   onSelectCategory(category.id);
                 }}
-                className={`flex w-full items-center justify-between gap-3 rounded-lg px-2 py-2 text-left transition ${
+                className={`flex w-full items-center justify-between gap-3 rounded-lg border px-2 py-2 text-left transition ${
                   groupIsActive
-                    ? "bg-slate-800 text-white"
-                    : "text-slate-300 hover:bg-slate-800"
+                        ? "bg-slate-800 text-white"
+                        : "border-transparent text-slate-300 hover:bg-slate-800"
                 }`}
+                style={
+                    groupIsActive
+                      ? {
+                          borderColor: companyStyles.primaryColor,
+                          color: companyStyles.primaryColor,
+                        }
+                      : undefined
+                  }
               >
                 <div className="flex items-center gap-3">
                   <div className="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full border border-slate-700 bg-slate-800 text-xs font-bold text-slate-300">
@@ -101,11 +111,20 @@ export function CategorySidebar({
                         key={child.id}
                         type="button"
                         onClick={() => onSelectProductLine(child.id)}
-                        className={`flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-sm transition ${
+                        className={`flex w-full items-center gap-2 rounded-lg border px-2 py-1.5 text-left text-sm transition ${
                           isSelected
                             ? "bg-slate-700 text-white"
-                            : "text-slate-400 hover:bg-slate-800 hover:text-slate-200"
+                            : "border-transparent text-slate-400 hover:bg-slate-800 hover:text-slate-200"
                         }`}
+                        style={
+                           isSelected
+                            ? {
+                              borderColor: companyStyles.primaryColor,
+                              color: companyStyles.primaryColor,
+                              }
+                            : undefined
+                          }  
+
                       >
                         <span className="text-slate-600">└</span>
                         <span>{child.name}</span>

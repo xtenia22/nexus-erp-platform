@@ -1,5 +1,6 @@
 import { ProductCatalog } from "@/components/catalog/product-catalog";
 import { getProducts, getCategories, getBrands } from "@/services/api";
+import {company} from "@/companyLayer/company.config";
 
 export default async function ProductsPage() {
   const productsResponse = await getProducts();
@@ -13,15 +14,15 @@ export default async function ProductsPage() {
       <section className="mx-auto max-w-6xl px-6 py-16">
         <div className="mb-10">
           <p className="mb-3 text-sm uppercase tracking-[0.2em] text-slate-400">
-            Catálogo
+            {company.content.catalog.eyeBrow}
           </p>
 
           <h1 className="mb-4 text-4xl font-bold tracking-tight">
-            Productos
+            {company.content.catalog.title}
           </h1>
 
           <p className="max-w-2xl text-slate-300">
-            Listado de productos obtenido desde la API del backend.
+           {company.content.catalog.subtitle}
           </p>
         </div>
 

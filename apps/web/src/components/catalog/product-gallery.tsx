@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { company } from "@/companyLayer/company.config";
 
 type ProductGalleryProps = {
   images: string[];
@@ -14,7 +15,7 @@ export function ProductGallery({ images, alt }: ProductGalleryProps) {
   if (!selectedImage) {
     return (
       <div className="flex h-80 w-full items-center justify-center rounded-2xl border border-slate-800 bg-slate-900 text-slate-500">
-        Sin imagen
+        {company.content.catalog.productGallery.noImage}
       </div>
     );
   }

@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { Product } from "@/types/product";
 import { getAssetUrl } from "@/lib/assets";
+import { company } from "@/companyLayer/company.config";
+
 
 type ProductCardProps = {
   product: Product;
@@ -33,7 +35,7 @@ export function ProductCard({ product }: ProductCardProps) {
             />
           ) : (
             <div className="flex h-full w-full items-center justify-center text-sm text-slate-500">
-              Sin imagen
+             {company.content.productCard.noImage}
             </div>
           )}
         </div>
@@ -58,7 +60,7 @@ export function ProductCard({ product }: ProductCardProps) {
           </p>
 
           <p className="text-xs text-slate-500 lg:text-sm">
-            Años: {formatYearRange(product)}
+            {company.content.productCard.yearsLabel}: {formatYearRange(product)}
           </p>
 
           <div className="flex items-center justify-between gap-3 pt-1">
@@ -67,7 +69,7 @@ export function ProductCard({ product }: ProductCardProps) {
             </p>
 
             <span className="text-xs font-medium text-slate-400 transition group-hover:text-slate-100 lg:text-sm">
-              Ver →
+              {company.content.productCard.detailCta} →
             </span>
           </div>
         </div>

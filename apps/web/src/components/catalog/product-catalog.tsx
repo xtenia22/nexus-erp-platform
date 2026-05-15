@@ -17,6 +17,8 @@ import {
 
 import { CategorySidebar } from "@/components/catalog/category-sidebar";
 import { FilterPanel } from "@/components/catalog/filter-panel";
+import { companyStyles } from "@/companyLayer/company.styles";
+import { company } from "@/companyLayer/company.config";
 
 
 type ProductCatalogProps = {
@@ -98,6 +100,8 @@ export function ProductCatalog({products,categoryTreeInitial, brandsInitial,}: P
 
   const [isVehicleFiltersOpen, setIsVehicleFiltersOpen] = useState(false);
   const [isMoreFiltersOpen, setIsMoreFiltersOpen] = useState(false);
+
+  const catalogLabels = company.content.catalog;
 
   useEffect(() => {
     if (selectedBrand || selectedModel || selectedYear) {
@@ -316,6 +320,7 @@ export function ProductCatalog({products,categoryTreeInitial, brandsInitial,}: P
 
   return (
     <div className="flex flex-col gap-4 lg:grid lg:grid-cols-[260px_1fr] lg:gap-8">
+
     <div className="hidden lg:block">
     <CategorySidebar
             categoryTree={categoryTree}
@@ -424,9 +429,13 @@ export function ProductCatalog({products,categoryTreeInitial, brandsInitial,}: P
               <button
                 type="button"
                 onClick={() => setSearchTerm("")}
-                className="flex items-center gap-2 rounded-full bg-slate-800 px-3 py-1 text-sm text-slate-200 hover:bg-slate-700"
+               className="flex items-center gap-2 rounded-full border px-3 py-1 text-sm transition hover:opacity-90"
+                  style={{
+                    borderColor: companyStyles.primaryColor,
+                    color: companyStyles.primaryColor,
+                  }}
               >
-                Buscar: {searchTerm}
+               { catalogLabels.activeFilters.searchPrefix}: {searchTerm}
                 <span>✕</span>
               </button>
             )}
@@ -435,9 +444,13 @@ export function ProductCatalog({products,categoryTreeInitial, brandsInitial,}: P
               <button
                 type="button"
                 onClick={() => setSelectedCategoryId(null)}
-                className="flex items-center gap-2 rounded-full bg-slate-800 px-3 py-1 text-sm text-slate-200 hover:bg-slate-700"
+                className="flex items-center gap-2 rounded-full border px-3 py-1 text-sm transition hover:opacity-90"
+                  style={{
+                    borderColor: companyStyles.primaryColor,
+                    color: companyStyles.primaryColor,
+                  }}
               >
-                Categoría: {activeCategory.name}
+                {catalogLabels.activeFilters.categoryPrefix}: {activeCategory.name}
                 <span>✕</span>
               </button>
             )}
@@ -446,9 +459,13 @@ export function ProductCatalog({products,categoryTreeInitial, brandsInitial,}: P
               <button
                 type="button"
                 onClick={() => setSelectedProductLineId(null)}
-                className="flex items-center gap-2 rounded-full bg-slate-800 px-3 py-1 text-sm text-slate-200 hover:bg-slate-700"
+               className="flex items-center gap-2 rounded-full border px-3 py-1 text-sm transition hover:opacity-90"
+                style={{
+                  borderColor: companyStyles.primaryColor,
+                  color: companyStyles.primaryColor,
+                }}
               >
-                Línea: {activeProductLine.name}
+                {catalogLabels.activeFilters.productLinePrefix}: {activeProductLine.name}
                 <span>✕</span>
               </button>
             )}
@@ -461,7 +478,11 @@ export function ProductCatalog({products,categoryTreeInitial, brandsInitial,}: P
                   setSelectedModel(null);
                   setModels([]);
                 }}
-                className="flex items-center gap-2 rounded-full bg-slate-800 px-3 py-1 text-sm text-slate-200 hover:bg-slate-700"
+               className="flex items-center gap-2 rounded-full border px-3 py-1 text-sm transition hover:opacity-90"
+                style={{
+                  borderColor: companyStyles.primaryColor,
+                  color: companyStyles.primaryColor,
+                }}
               >
                 {brands.find((b) => b.id === selectedBrand)?.name}
                 <span>✕</span>
@@ -472,7 +493,11 @@ export function ProductCatalog({products,categoryTreeInitial, brandsInitial,}: P
               <button
                 type="button"
                 onClick={() => setSelectedModel(null)}
-                className="flex items-center gap-2 rounded-full bg-slate-800 px-3 py-1 text-sm text-slate-200 hover:bg-slate-700"
+                className="flex items-center gap-2 rounded-full border px-3 py-1 text-sm transition hover:opacity-90"
+                    style={{
+                      borderColor: companyStyles.primaryColor,
+                      color: companyStyles.primaryColor,
+                    }}
               >
                 {models.find((m) => m.id === selectedModel)?.name}
                 <span>✕</span>
@@ -483,9 +508,13 @@ export function ProductCatalog({products,categoryTreeInitial, brandsInitial,}: P
               <button
                 type="button"
                 onClick={() => setSelectedYear(null)}
-                className="flex items-center gap-2 rounded-full bg-slate-800 px-3 py-1 text-sm text-slate-200 hover:bg-slate-700"
+               className="flex items-center gap-2 rounded-full border px-3 py-1 text-sm transition hover:opacity-90"
+                  style={{
+                    borderColor: companyStyles.primaryColor,
+                    color: companyStyles.primaryColor,
+                  }}
               >
-                Año: {selectedYear}
+                {catalogLabels.activeFilters.yearPrefix}: {selectedYear}
                 <span>✕</span>
               </button>
             )}
@@ -494,9 +523,13 @@ export function ProductCatalog({products,categoryTreeInitial, brandsInitial,}: P
               <button
                 type="button"
                 onClick={() => setMinPrice("")}
-                className="flex items-center gap-2 rounded-full bg-slate-800 px-3 py-1 text-sm text-slate-200 hover:bg-slate-700"
+             className="flex items-center gap-2 rounded-full border px-3 py-1 text-sm transition hover:opacity-90"
+                style={{
+                  borderColor: companyStyles.primaryColor,
+                  color: companyStyles.primaryColor,
+                }}
               >
-                Min: {minPrice}
+                {catalogLabels.activeFilters.minPricePrefix}: {minPrice}
                 <span>✕</span>
               </button>
             )}
@@ -505,9 +538,13 @@ export function ProductCatalog({products,categoryTreeInitial, brandsInitial,}: P
               <button
                 type="button"
                 onClick={() => setMaxPrice("")}
-                className="flex items-center gap-2 rounded-full bg-slate-800 px-3 py-1 text-sm text-slate-200 hover:bg-slate-700"
+              className="flex items-center gap-2 rounded-full border px-3 py-1 text-sm transition hover:opacity-90"
+                style={{
+                  borderColor: companyStyles.primaryColor,
+                  color: companyStyles.primaryColor,
+                }}
               >
-                Max: {maxPrice}
+                {catalogLabels.activeFilters.maxPricePrefix}: {maxPrice}
                 <span>✕</span>
               </button>
             )}
@@ -516,9 +553,13 @@ export function ProductCatalog({products,categoryTreeInitial, brandsInitial,}: P
               <button
                 type="button"
                 onClick={() => setSortBy("")}
-                className="flex items-center gap-2 rounded-full bg-slate-800 px-3 py-1 text-sm text-slate-200 hover:bg-slate-700"
+              className="flex items-center gap-2 rounded-full border px-3 py-1 text-sm transition hover:opacity-90"
+                style={{
+                  borderColor: companyStyles.primaryColor,
+                  color: companyStyles.primaryColor,
+                }}
               >
-                Orden aplicado
+                {catalogLabels.activeFilters.sortApplied}
                 <span>✕</span>
               </button>
             )}
@@ -548,11 +589,12 @@ export function ProductCatalog({products,categoryTreeInitial, brandsInitial,}: P
                   disabled={currentPage === 1}
                   className="rounded-xl border border-slate-700 px-4 py-2 text-sm text-slate-200 disabled:opacity-40 hover:bg-slate-800"
                 >
-                  Anterior
+                  {catalogLabels.pagination.previous}
                 </button>
 
                 <span className="text-sm text-slate-300">
-                  Página {currentPage} de {totalPages}
+                  {catalogLabels.pagination.pageLabel} {currentPage}{" "}
+                  {catalogLabels.pagination.ofLabel} {totalPages}
                 </span>
 
                 <button
@@ -562,21 +604,21 @@ export function ProductCatalog({products,categoryTreeInitial, brandsInitial,}: P
                   disabled={currentPage === totalPages}
                   className="rounded-xl border border-slate-700 px-4 py-2 text-sm text-slate-200 disabled:opacity-40 hover:bg-slate-800"
                 >
-                  Siguiente
+                  {catalogLabels.pagination.next}
                 </button>
               </div>
             )}
           </>
         ) : (
           <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6 text-slate-300">
-            No se encontraron productos con los filtros seleccionados.
+            {catalogLabels.emptyState.message}
 
             <div className="mt-4">
               <button
                 onClick={clearFilters}
                 className="rounded-lg bg-slate-700 px-4 py-2 text-sm hover:bg-slate-600"
               >
-                Limpiar filtros
+                {catalogLabels.emptyState.clearFilters}
               </button>
             </div>
           </div>

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { company } from "@/companyLayer/company.config";
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Nexus ERP Platform",
-  description: "Modern web platform connected to an ERP through API",
+  title: company.displayName,
+  description: company.branding.tagline,
 };
 
 

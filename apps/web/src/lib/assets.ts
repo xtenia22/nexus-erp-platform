@@ -1,4 +1,6 @@
-const ASSETS_BASE_URL = "https://bracco4x4.com/pruebaFtp";
+import { company } from "@/companyLayer/company.config";
+
+const ASSETS_BASE_URL =company.assetsBaseUrl;
 
 export function getAssetUrl(path: string | null) {
   if (!path) {

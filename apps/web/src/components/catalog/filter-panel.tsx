@@ -1,3 +1,6 @@
+import { company } from "@/companyLayer/company.config";
+import { companyStyles } from "@/companyLayer/company.styles";
+
 type FilterPanelProps = {
   searchTerm: string;
   minPrice: string;
@@ -53,6 +56,7 @@ export function FilterPanel({
   onToggleMoreFilters,
   onClearFilters,
 }: FilterPanelProps) {
+  const labels = company.content.catalog.filterPanel;
   return (
     <div className="mb-4 rounded-2xl border border-slate-800 bg-slate-900 p-4 lg:mb-8 lg:p-5">
       <div
@@ -65,7 +69,7 @@ export function FilterPanel({
             htmlFor="product-search"
             className="mb-2 block text-sm font-medium text-slate-300"
           >
-            Buscar productos
+            {labels.searchLabel}
           </label>
 
           <input
@@ -73,7 +77,7 @@ export function FilterPanel({
             type="text"
             value={searchTerm}
             onChange={(event) => onSearchChange(event.target.value)}
-            placeholder="Buscar por nombre, código o descripción..."
+            placeholder={company.content.catalog.searchPlaceholder}
             className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-slate-500"
           />
         </div>
@@ -84,7 +88,7 @@ export function FilterPanel({
             onClick={onToggleVehicleFilters}
             className="flex w-full items-center justify-between rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-left text-sm font-semibold text-slate-100 transition hover:bg-slate-800"
           >
-            <span>Buscar tu vehículo</span>
+            <span>{company.content.catalog.vehicleFilterTitle}  </span>
             <span className="text-slate-400">
               {isVehicleFiltersOpen ? "▲" : "▼"}
             </span>
@@ -94,7 +98,7 @@ export function FilterPanel({
             <div className="mt-4 grid gap-4 md:grid-cols-3">
               <div>
                 <label className="mb-1 block text-sm text-slate-300">
-                  Marca
+                  {labels.brandLabel}
                 </label>
                 <select
                   value={selectedBrand ?? ""}
@@ -104,7 +108,7 @@ export function FilterPanel({
                   }}
                   className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2 text-slate-200"
                 >
-                  <option value="">Todas</option>
+                  <option value="">{labels.allBrandsOption} </option>
                   {brands.map((brand) => (
                     <option key={brand.id} value={brand.id}>
                       {brand.name}
@@ -115,7 +119,7 @@ export function FilterPanel({
 
               <div>
                 <label className="mb-1 block text-sm text-slate-300">
-                  Modelo
+                  {labels.modelLabel}
                 </label>
                 <select
                   value={selectedModel ?? ""}
@@ -126,7 +130,7 @@ export function FilterPanel({
                   disabled={!selectedBrand}
                   className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2 text-slate-200 disabled:opacity-50"
                 >
-                  <option value="">Todos</option>
+                  <option value=""> {labels.allModelsOption} </option>
                   {models.map((model) => (
                     <option key={model.id} value={model.id}>
                       {model.name}
@@ -137,7 +141,7 @@ export function FilterPanel({
 
               <div>
                 <label className="mb-1 block text-sm text-slate-300">
-                  Año
+                  {labels.yearLabel}
                 </label>
                 <select
                   value={selectedYear ?? ""}
@@ -147,7 +151,7 @@ export function FilterPanel({
                   }}
                   className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2 text-slate-200"
                 >
-                  <option value="">Todos</option>
+                  <option value="">{labels.allYearsOption} </option>
                   {Array.from({ length: 25 }, (_, index) => {
                     const year = 2025 - index;
                     return (
@@ -168,7 +172,7 @@ export function FilterPanel({
             onClick={onToggleMoreFilters}
             className="flex w-full items-center justify-between rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-left text-sm font-semibold text-slate-100 transition hover:bg-slate-800"
           >
-            <span>Más filtros</span>
+            <span> {company.content.catalog.moreFiltersTitle} </span>
             <span className="text-slate-400">
               {isMoreFiltersOpen ? "▲" : "▼"}
             </span>
@@ -181,7 +185,7 @@ export function FilterPanel({
                   htmlFor="min-price"
                   className="mb-2 block text-sm font-medium text-slate-300"
                 >
-                  Precio mínimo
+                  {labels.minPriceLabel}
                 </label>
 
                 <input
@@ -189,7 +193,7 @@ export function FilterPanel({
                   type="number"
                   value={minPrice}
                   onChange={(event) => onMinPriceChange(event.target.value)}
-                  placeholder="Ej: 100"
+                  placeholder={labels.minPricePlaceholder}
                   className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-slate-500"
                 />
               </div>
@@ -199,7 +203,7 @@ export function FilterPanel({
                   htmlFor="max-price"
                   className="mb-2 block text-sm font-medium text-slate-300"
                 >
-                  Precio máximo
+                  {labels.maxPriceLabel}
                 </label>
 
                 <input
@@ -207,7 +211,7 @@ export function FilterPanel({
                   type="number"
                   value={maxPrice}
                   onChange={(event) => onMaxPriceChange(event.target.value)}
-                  placeholder="Ej: 1000"
+                  placeholder={labels.minPricePlaceholder}
                   className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-slate-500"
                 />
               </div>
@@ -221,8 +225,9 @@ export function FilterPanel({
           type="button"
           onClick={onClearFilters}
           className="mt-4 rounded-xl bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-500"
+          style={companyStyles.primaryButton}
         >
-          Limpiar filtros
+         {labels.clearFilters}
         </button>
       )}
     </div>
