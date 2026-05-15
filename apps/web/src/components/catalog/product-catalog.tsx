@@ -7,11 +7,9 @@ import { getAssetUrl } from "@/lib/assets";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { ProductCardSkeleton } from "@/components/catalog/product-card-skeleton";
 import {
-  getBrands,
   getModels,
   getProducts,
-  getCategories,
-  type CategoryTreeItem,
+   type CategoryTreeItem,
 } from "@/services/api";
 
 
@@ -323,6 +321,7 @@ export function ProductCatalog({products,categoryTreeInitial, brandsInitial,}: P
 
     <div className="hidden lg:block">
     <CategorySidebar
+            variant="desktop"
             categoryTree={categoryTree}
             selectedCategoryId={selectedCategoryId}
             selectedProductLineId={selectedProductLineId}
@@ -347,7 +346,7 @@ export function ProductCatalog({products,categoryTreeInitial, brandsInitial,}: P
           searchTerm={searchTerm}
           minPrice={minPrice}
           maxPrice={maxPrice}
-          sortBy={sortBy}
+          
           brands={brands}
           models={models}
           selectedBrand={selectedBrand}
@@ -360,7 +359,7 @@ export function ProductCatalog({products,categoryTreeInitial, brandsInitial,}: P
           onSearchChange={setSearchTerm}
           onMinPriceChange={setMinPrice}
           onMaxPriceChange={setMaxPrice}
-          onSortChange={setSortBy}
+          
           onBrandChange={(brandId) => {
             setSelectedBrand(brandId);
             setSelectedModel(null);
@@ -378,6 +377,7 @@ export function ProductCatalog({products,categoryTreeInitial, brandsInitial,}: P
 
         <div className="mb-4 lg:hidden">
             <CategorySidebar
+              variant="mobile"  
               categoryTree={categoryTree}
               selectedCategoryId={selectedCategoryId}
               selectedProductLineId={selectedProductLineId}
@@ -400,12 +400,14 @@ export function ProductCatalog({products,categoryTreeInitial, brandsInitial,}: P
 
       <div className="mb-3 flex flex-col gap-2 md:mb-4 md:flex-row md:items-center md:justify-between">
           <p className="text-sm text-slate-400">
-            Mostrando {catalogProducts.length} de {totalProducts} resultados
+           {catalogLabels.resultsSummary.showing} {catalogProducts.length}{" "}
+           {catalogLabels.resultsSummary.of} {totalProducts}{" "}
+           {catalogLabels.resultsSummary.results}
           </p>
 
           <div className="flex items-center gap-2">
             <label htmlFor="sort-by" className="text-sm text-slate-400">
-              Ordenar:
+              {catalogLabels.sorting.label}:
             </label>
 
             <select
@@ -414,11 +416,11 @@ export function ProductCatalog({products,categoryTreeInitial, brandsInitial,}: P
               onChange={(event) => setSortBy(event.target.value)}
               className="rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-slate-500"
             >
-              <option value="">Sin orden</option>
-              <option value="name-asc">Nombre A-Z</option>
-              <option value="name-desc">Nombre Z-A</option>
-              <option value="price-asc">Precio menor a mayor</option>
-              <option value="price-desc">Precio mayor a menor</option>
+              <option value="">{catalogLabels.sorting.defaultOption}</option>
+              <option value="name-asc">{catalogLabels.sorting.nameAsc}</option>
+              <option value="name-desc">{catalogLabels.sorting.nameDesc}</option>
+              <option value="price-asc">{catalogLabels.sorting.priceAsc}</option>
+              <option value="price-desc">{catalogLabels.sorting.priceDesc}</option>
             </select>
           </div>
         </div>

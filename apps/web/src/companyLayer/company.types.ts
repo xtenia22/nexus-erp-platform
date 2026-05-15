@@ -112,6 +112,22 @@ export type CompanyContent = {
       clearFilters: string;
     };
 
+
+    resultsSummary: {
+      showing: string;
+      of: string;
+      results: string;
+    };
+
+    sorting: {
+      label: string;
+      defaultOption: string;
+      nameAsc: string;
+      nameDesc: string;
+      priceAsc: string;
+      priceDesc: string;
+    };
+
   };  
   navigation : {
     home:string;

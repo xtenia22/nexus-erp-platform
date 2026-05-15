@@ -75,22 +75,54 @@ export class ProductsService {
     };
   }
 
-  if (search) {
-    const words = search
-      .trim()
-      .toLowerCase()
-      .split(' ')
-      .filter(Boolean);
+ if (search) {
+  const words = search
+    .trim()
+    .toLowerCase()
+    .split(' ')
+    .filter(Boolean);
 
-    where.AND = [
-      ...(where.AND ?? []),
-      ...words.map((word) => ({
-        description: {
-          contains: word,
+  where.AND = [
+    ...(where.AND ?? []),
+    ...words.map((word) => ({
+      OR: [
+        {
+          description: {
+            contains: word,
+          },
         },
-      })),
-    ];
-  }
+        {
+          product: {
+            code: {
+              contains: word,
+            },
+          },
+        },
+        {
+          brand: {
+            name: {
+              contains: word,
+            },
+          },
+        },
+        {
+          vehicleModel: {
+            name: {
+              contains: word,
+            },
+          },
+        },
+        {
+          productLine: {
+            name: {
+              contains: word,
+            },
+          },
+        },
+      ],
+    })),
+  ];
+}
 
   const orderBy =
     sort === 'name-asc'

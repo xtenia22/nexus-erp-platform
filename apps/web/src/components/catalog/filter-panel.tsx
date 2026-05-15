@@ -5,15 +5,11 @@ type FilterPanelProps = {
   searchTerm: string;
   minPrice: string;
   maxPrice: string;
-
-
   brands: any[];
   models: any[];
-
   selectedBrand: number | null;
   selectedModel: number | null;
   selectedYear: number | null;
-
   isFiltering: boolean;
   isVehicleFiltersOpen: boolean;
   isMoreFiltersOpen: boolean;

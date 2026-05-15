@@ -125,7 +125,20 @@ export const braccoCompany: CompanyConfig = {
       clearFilters: "Limpiar filtros",
     },
 
+   resultsSummary: {
+      showing: "Mostrando",
+      of: "de",
+      results: "resultados",
+    },
 
+    sorting: {
+      label: "Ordenar",
+      defaultOption: "Sin orden",
+      nameAsc: "Nombre A-Z",
+      nameDesc: "Nombre Z-A",
+      priceAsc: "Precio menor a mayor",
+      priceDesc: "Precio mayor a menor",
+    },
 
 
 

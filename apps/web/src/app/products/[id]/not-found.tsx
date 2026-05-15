@@ -10,7 +10,7 @@ export default function ProductNotFoundPage() {
           </h1>
 
           <p className="text-slate-300">
-            {company.content.productDetail.notFoundDescription};
+            {company.content.productDetail.notFoundDescription}
           </p>
         </div>
       </section>

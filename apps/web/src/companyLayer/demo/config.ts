@@ -130,6 +130,22 @@ export const demoCompany: CompanyConfig = {
       },
 
 
+      resultsSummary: {
+        showing: "Mostrando",
+        of: "de",
+        results: "productos",
+      },
+
+      sorting: {
+        label: "Ordenar",
+        defaultOption: "Sin orden",
+        nameAsc: "Nombre A-Z",
+        nameDesc: "Nombre Z-A",
+        priceAsc: "Precio menor a mayor",
+        priceDesc: "Precio mayor a menor",
+      },
+
+
     },
     navigation: {
       home: "Inicio",
