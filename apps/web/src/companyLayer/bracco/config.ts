@@ -187,7 +187,7 @@ export const braccoCompany: CompanyConfig = {
 
   theme: {
     colors: {
-      primary: "#0092C6",
+      primary: "#001489",
       secondary: "#1A1A1A",
       background: "#FFFFFF",
       text: "#1A1A1A",

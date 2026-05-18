@@ -7,12 +7,15 @@ type ProductCardProps = {
   product: Product;
 };
 
+const productCardByVariant = {
+  "light-premium": BraccoProductCard,
+  "dark-industrial": StandardProductCard,
+};
+
 export function ProductCard({ product }: ProductCardProps) {
   const productCardVariant = company.ui.components.productCard.variant;
-  const isLightPremium = productCardVariant === "light-premium";
-  if (isLightPremium) {
-    return <BraccoProductCard product={product} />;
-  }
+  const ProductCardComponent =
+    productCardByVariant[productCardVariant] ?? StandardProductCard;
 
-  return <StandardProductCard product={product} />;
+  return <ProductCardComponent product={product} />;
 }

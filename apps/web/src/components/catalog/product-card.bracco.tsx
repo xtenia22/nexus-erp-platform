@@ -1,83 +1,105 @@
 import Link from "next/link";
-import { Product } from "@/types/product";
-import { getAssetUrl } from "@/lib/assets";
 import { company } from "@/companyLayer/company.config";
 import { companyStyles } from "@/companyLayer/company.styles";
+import { getAssetUrl } from "@/lib/assets";
 import { formatPrice, formatYearRange } from "@/lib/formatters";
+import { Product } from "@/types/product";
 
-type Props = {
+type BraccoProductCardProps = {
   product: Product;
 };
 
-export function BraccoProductCard({ product }: Props) {
+export function BraccoProductCard({ product }: BraccoProductCardProps) {
   const imageUrl = getAssetUrl(product.image1Url);
-  const cardLabels = company.content.productCard;
-
-  const yearRange = formatYearRange(product, cardLabels.unspecifiedYears);
+  const labels = company.content.productCard;
+  const yearRange = formatYearRange(product, labels.unspecifiedYears);
 
   return (
     <Link href={`/products/${product.id}`} className="group block h-full">
-      <article className="flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-xl">
-        <div className="relative aspect-[16/10] overflow-hidden bg-slate-100">
-          {imageUrl ? (
-            <img
-              src={imageUrl}
-              alt={product.name}
-              className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
-            />
-          ) : (
-            <div className="flex h-full w-full items-center justify-center text-sm text-slate-400">
-              {cardLabels.noImage}
-            </div>
-          )}
-
-          <div
-            className="absolute left-3 top-3 rounded-full px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-white shadow-sm"
-            style={companyStyles.primaryButton}
-          >
-            {product.category}
+      <article className="flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-300 ease-out hover:-translate-y-1 hover:border-slate-300 hover:shadow-xl hover:shadow-slate-300/40">
+        <div className="relative overflow-hidden border-b border-slate-100 bg-white">
+          <div className="aspect-[16/10] w-full">
+            {imageUrl ? (
+              <img
+                src={imageUrl}
+                alt={product.name}
+                className="h-full w-full object-contain p-1 transition duration-300 group-hover:scale-[1.04] md:p-2"
+              />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center text-sm text-slate-400">
+                {labels.noImage}
+              </div>
+            )}
           </div>
         </div>
 
-        <div className="flex flex-1 flex-col p-3 lg:p-4">
-          <div className="mb-2 flex items-center justify-between gap-2">
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-[11px] font-medium text-slate-500">
+        <div
+          className="min-h-[42px] px-4 py-2 text-[11px] font-bold uppercase leading-4 tracking-[0.14em] text-white"
+          style={{
+            //backgroundColor: companyStyles.primaryColor,
+   
+            backgroundColor: `${companyStyles.primaryColor}E6`,
+
+            fontFamily: company.theme.typography.heading,
+          }}
+        >
+          <span className="line-clamp-2">{product.category}</span>
+        </div>
+
+        <div className="flex flex-1 flex-col p-4">
+          <div className="mb-3 flex items-center justify-between gap-3">
+            <span className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-[11px] font-medium text-slate-500">
               {product.code}
             </span>
 
-            <span className="text-[11px] font-medium text-slate-400">
+            <span className="shrink-0 text-[11px] font-medium text-slate-400">
               {yearRange}
             </span>
           </div>
 
-          <h2 className="line-clamp-2 text-sm font-bold leading-tight text-slate-900 lg:text-base">
+          <h2
+            className="line-clamp-2 min-h-[44px] text-[15px] font-bold leading-snug tracking-tight text-slate-950 lg:text-base"
+            style={{
+              fontFamily: company.theme.typography.heading,
+            }}
+          >
             {product.name}
           </h2>
 
-          <p className="mt-2 line-clamp-1 text-xs font-medium text-slate-500">
+          <p
+            className="mt-2 line-clamp-1 text-xs font-medium uppercase tracking-wide text-slate-500"
+            style={{
+              fontFamily: company.theme.typography.body,
+            }}
+          >
             {product.brand} / {product.model}
           </p>
 
-          <div className="mt-auto flex items-center justify-between gap-3 pt-4">
-            <div>
-              <p className="text-[11px] uppercase tracking-wide text-slate-400">
-                Precio
-              </p>
+          <div className="mt-auto pt-4">
+            <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">
+              {labels.priceLabel ?? "Precio"}
+            </p>
 
+            <div className="flex items-end justify-between gap-3">
               <p
-                className="text-base font-extrabold lg:text-lg"
-                style={companyStyles.primaryText}
+                className="text-xl font-extrabold leading-none"
+                style={{
+                  color: companyStyles.primaryColor,
+                  fontFamily: company.theme.typography.heading,
+                }}
               >
                 $ {formatPrice(product.price)}
               </p>
-            </div>
 
-            <span
-              className="rounded-xl px-3 py-2 text-xs font-bold text-white transition group-hover:opacity-90 lg:text-sm"
-              style={companyStyles.primaryButton}
-            >
-              {cardLabels.detailCta}
-            </span>
+              <span
+                className="rounded-xl px-4 py-2 text-sm font-bold text-white transition group-hover:opacity-90"
+                style={{
+                  backgroundColor: companyStyles.primaryColor,
+                }}
+              >
+                {labels.detailCta}
+              </span>
+            </div>
           </div>
         </div>
       </article>
