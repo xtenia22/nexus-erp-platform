@@ -2,34 +2,17 @@ import Link from "next/link";
 import { Product } from "@/types/product";
 import { getAssetUrl } from "@/lib/assets";
 import { company } from "@/companyLayer/company.config";
-
+import { formatPrice, formatYearRange } from "@/lib/formatters";
 
 type ProductCardProps = {
   product: Product;
 };
 
-function formatYearRange(product: Product) {
-  if (!product.yearFrom && !product.yearTo) {
-    return  company.content.productCard.unspecifiedYears;
-  }
-
-  if (product.yearFrom && !product.yearTo) {
-    return `${product.yearFrom}+`;
-  }
-
-  return `${product.yearFrom ?? ""} - ${product.yearTo ?? ""}`;
-}
-
-function formatPrice(price: number) {
-  return new Intl.NumberFormat("es-AR", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(price);
-}
-
-
 export function ProductCard({ product }: ProductCardProps) {
   const imageUrl = getAssetUrl(product.image1Url);
+  const cardLabels = company.content.productCard;
+
+  const yearRange = formatYearRange(product, cardLabels.unspecifiedYears);
 
   return (
     <Link href={`/products/${product.id}`} className="group block h-full">
@@ -43,7 +26,7 @@ export function ProductCard({ product }: ProductCardProps) {
             />
           ) : (
             <div className="flex h-full w-full items-center justify-center text-sm text-slate-500">
-             {company.content.productCard.noImage}
+              {cardLabels.noImage}
             </div>
           )}
         </div>
@@ -68,7 +51,7 @@ export function ProductCard({ product }: ProductCardProps) {
           </p>
 
           <p className="text-xs text-slate-500 lg:text-sm">
-            {company.content.productCard.yearsLabel}: {formatYearRange(product)}
+            {cardLabels.yearsLabel}: {yearRange}
           </p>
 
           <div className="flex items-center justify-between gap-3 pt-1">
@@ -77,7 +60,7 @@ export function ProductCard({ product }: ProductCardProps) {
             </p>
 
             <span className="text-xs font-medium text-slate-400 transition group-hover:text-slate-100 lg:text-sm">
-              {company.content.productCard.detailCta} →
+              {cardLabels.detailCta} →
             </span>
           </div>
         </div>

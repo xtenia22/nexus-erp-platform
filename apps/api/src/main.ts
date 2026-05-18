@@ -8,11 +8,12 @@ async function bootstrap() {
   origin: [
     "http://localhost:3000",
     "http://192.168.1.64:3000",
+     "http://192.168.5.20:3000",
   ],
   credentials: true,
 });
 
   app.setGlobalPrefix('api');
-  await app.listen(process.env.PORT ?? 3001);
+  await app.listen(process.env.PORT ?? 3001, "0.0.0.0");
 }
 bootstrap();

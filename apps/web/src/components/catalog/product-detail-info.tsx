@@ -1,6 +1,8 @@
 import { company } from "@/companyLayer/company.config";
 import { companyStyles } from "@/companyLayer/company.styles";
 import { Product } from "@/types/product";
+import { formatPrice, formatYearRange } from "@/lib/formatters";
+
 
 type ProductDetailInfoProps = {
   product: Product;
@@ -8,24 +10,6 @@ type ProductDetailInfoProps = {
   videoUrl: string | null;
 };
 
-function formatYearRange(product: Product, unspecifiedYears: string) {
-  if (!product.yearFrom && !product.yearTo) {
-    return unspecifiedYears;
-  }
-
-  if (product.yearFrom && !product.yearTo) {
-    return `${product.yearFrom}+`;
-  }
-
-  return `${product.yearFrom ?? ""} - ${product.yearTo ?? ""}`;
-}
-
-function formatPrice(price: number) {
-  return new Intl.NumberFormat("es-AR", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(price);
-}
 
 
 type SpecRowProps = {
