@@ -34,17 +34,16 @@ export function BraccoProductCard({ product }: BraccoProductCardProps) {
         </div>
 
         <div
-          className="min-h-[42px] px-4 py-2 text-[11px] font-bold uppercase leading-4 tracking-[0.14em] text-white"
-          style={{
-            //backgroundColor: companyStyles.primaryColor,
-   
-            backgroundColor: `${companyStyles.primaryColor}E6`,
-
-            fontFamily: company.theme.typography.heading,
-          }}
-        >
-          <span className="line-clamp-2">{product.category}</span>
-        </div>
+            className="min-h-[38px] border-y px-4 py-2 text-[11px] font-bold uppercase leading-4 tracking-[0.14em]"
+            style={{
+                borderColor: companyStyles.primaryColor,
+                color: companyStyles.primaryColor,
+                backgroundColor: `${companyStyles.primaryColor}10`,
+                fontFamily: company.theme.typography.heading,
+            }}
+            >
+            <span className="line-clamp-2">{product.category}</span>
+            </div>
 
         <div className="flex flex-1 flex-col p-4">
           <div className="mb-3 flex items-center justify-between gap-3">
