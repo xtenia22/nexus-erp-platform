@@ -204,4 +204,13 @@ export const braccoCompany: CompanyConfig = {
     auth: false,
     orders: false,
   },
+  
+  ui: {
+  style: "bracco",
+  components: {
+    productCard: {
+      variant: "light-premium",
+    },
+  },
+},
 };

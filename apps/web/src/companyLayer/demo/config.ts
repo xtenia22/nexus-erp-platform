@@ -202,4 +202,12 @@ export const demoCompany: CompanyConfig = {
     auth: false,
     orders: false,
   },
+  ui: {
+  style: "standard",
+  components: {
+    productCard: {
+      variant: "dark-industrial",
+    },
+  },
+},
 };

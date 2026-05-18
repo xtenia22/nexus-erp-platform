@@ -179,4 +179,18 @@ export type CompanyConfig = {
   content: CompanyContent;
   theme: CompanyTheme;
   features: CompanyFeatureFlags;
+  ui:CompanyUIConfig;
+};
+
+//export type CompanyUIStyle = "standard" | "bracco";
+
+export type ProductCardVariant = "dark-industrial" | "light-premium";
+
+export type CompanyUIConfig = {
+  style: "standard" | "bracco";
+  components: {
+    productCard: {
+      variant: ProductCardVariant;
+    };
+  };
 };
